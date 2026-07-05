@@ -13,8 +13,9 @@
 const CHANNEL_ID = "UCvbDv_cxJDA7OGYsRVSTBRg"; // youtube.com/@hopebaptistchurch9868
 const UPLOADS_PLAYLIST = "UUvbDv_cxJDA7OGYsRVSTBRg"; // channel uploads playlist = channel id with UC -> UU
 const ALLOW_ORIGIN = "https://hopebaptistwarsaw.org";
-const LIVE_CACHE_SECONDS = 120;   // live check is 100 quota units, so cache it
-const VIDEOS_CACHE_SECONDS = 3600; // sermon list is 1 unit and changes rarely
+const CACHE_VERSION = "v2";        // bump to invalidate edge-cached responses after a logic change
+const LIVE_CACHE_SECONDS = 120;    // live check is 100 quota units, so cache it
+const VIDEOS_CACHE_SECONDS = 600;  // sermon list; short enough that new sermons appear promptly
 
 const CORS = {
   "Access-Control-Allow-Origin": ALLOW_ORIGIN,
@@ -32,7 +33,7 @@ export default {
 // Is the channel live right now?
 async function handleLive(env, ctx) {
   const cache = caches.default;
-  const cacheKey = new Request("https://livecheck.internal/live/" + CHANNEL_ID);
+  const cacheKey = new Request("https://livecheck.internal/" + CACHE_VERSION + "/live/" + CHANNEL_ID);
   const cached = await cache.match(cacheKey);
   if (cached) return cached;
 
@@ -71,7 +72,7 @@ async function handleLive(env, ctx) {
 async function handleVideos(url, env, ctx) {
   const pageToken = url.searchParams.get("page") || "";
   const cache = caches.default;
-  const cacheKey = new Request("https://livecheck.internal/videos/" + (pageToken || "first"));
+  const cacheKey = new Request("https://livecheck.internal/" + CACHE_VERSION + "/videos/" + (pageToken || "first"));
   const cached = await cache.match(cacheKey);
   if (cached) return cached;
 
@@ -113,14 +114,15 @@ async function handleVideos(url, env, ctx) {
           if (!v || !raw[id]) return;
           const st = v.status || {};
           const sn = v.snippet || {};
+          const th = sn.thumbnails && (sn.thumbnails.medium || sn.thumbnails.high || sn.thumbnails.default);
+          const thumbUrl = th ? th.url : (raw[id].thumb || "");
           const watchable =
             st.privacyStatus === "public" &&
             st.embeddable !== false &&
             st.uploadStatus === "processed" &&
-            sn.liveBroadcastContent === "none";
+            sn.liveBroadcastContent === "none" &&
+            thumbUrl.indexOf("_live") === -1; // exclude live/offline broadcast placeholders
           if (!watchable) return;
-          // Use the current (non-live) thumbnail variant when available.
-          const th = sn.thumbnails && (sn.thumbnails.medium || sn.thumbnails.high || sn.thumbnails.default);
           if (th) raw[id].thumb = th.url;
           videos.push(raw[id]);
         });
