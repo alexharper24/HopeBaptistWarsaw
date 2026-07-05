@@ -106,7 +106,7 @@ function toggleVerse(el) {
   // Optional real-time confirmation. Paste the Cloudflare Worker URL here after
   // deploying live-check-worker/ to switch from schedule-guess to actual YouTube
   // live detection. Left blank, the schedule alone drives the indicator.
-  var LIVE_CHECK_URL = "https://hope-live-check.harperfinance.workers.dev";
+  var LIVE_CHECK_URL = "https://hope-live-check.alexharper.workers.dev";
   var btns = document.querySelectorAll('.watch-online');
   if (!btns.length) return;
   btns.forEach(function (a) { a.dataset.defaultHtml = a.innerHTML; });
