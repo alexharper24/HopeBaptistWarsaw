@@ -94,10 +94,12 @@ Icons are inline SVG (never an icon font — icon fonts failed to render reliabl
 ### Live service indicator (main.js, bottom)
 During service windows (church Eastern time) the three "Watch Online" buttons (header, mobile nav, footer) turn into a red pulsing "Watch Live" link to the live stream; otherwise they read "Watch Online" and link to the channel. Windows are defined in `isLive()` as minutes-since-midnight, 5 min before to 95 min after each service start:
 - Sunday morning 11:00 AM
-- Sunday evening 5:00 PM, **automatically 1:00 PM on the first Sunday of the month**
-- Wednesday 6:30 PM
+- Sunday evening 5:00 PM, **automatically 1:00 PM on the first Sunday of the month** (the evening service moves; it is not an extra service)
+- Wednesday 6:30 PM is **currently disabled** (commented out in `isLive()`). Re-enable by restoring the Wednesday window.
 
-Timezone is `America/Indiana/Indianapolis` (computed via `Intl`, so it is correct regardless of the visitor's location). It re-checks every 60 seconds. To change service times or add a streamed service, edit `isLive()`. The schedule is the source of truth; it does not detect the actual stream (that would need the YouTube API and a key, unsafe on a static site).
+Timezone is `America/Indiana/Indianapolis` (computed via `Intl`, so it is correct regardless of the visitor's location). It re-checks every 60 seconds. To change service times or add a streamed service, edit `isLive()`.
+
+The schedule is the gate. When `LIVE_CHECK_URL` is set (near the top of the live indicator block), the site also **confirms the actual stream** during those windows via a Cloudflare Worker (see `live-check-worker/`) that queries the YouTube Data API and returns `{live, watchUrl}`, and it deep-links to the exact live video. The Worker holds the API key as a secret so it never ships to the browser. If the Worker is unreachable, or `LIVE_CHECK_URL` is blank, the site falls back to the schedule alone. The Worker is only called during scheduled windows, so there is no API usage the rest of the week.
 
 ### YouTube
 Current channel: `https://youtube.com/@hopebaptistchurch9868`. Used for Sermons links, the "Browse Sermons" hero button, Watch Online (channel) / Watch Live (channel `/live`), and the footer YouTube link. If the channel changes, update `CHANNEL_URL` and `LIVE_URL` in `main.js` and the Sermons/YouTube `href`s in the four HTML files.

@@ -130,10 +130,9 @@ function toggleVerse(el) {
     var w = [];
     if (t.weekday === "Sunday") {
       w.push([655, 755]);                             // Morning service 11:00 AM
-      w.push(day <= 7 ? [775, 875] : [1015, 1115]);   // Evening: 1:00 PM first Sunday, else 5:00 PM
-    } else if (t.weekday === "Wednesday") {
-      w.push([1105, 1205]);                           // Wednesday 6:30 PM
+      w.push(day <= 7 ? [775, 875] : [1015, 1115]);   // Afternoon 1:00 PM first Sunday, else evening 5:00 PM
     }
+    // Wednesday 6:30 PM service intentionally disabled for now.
     return w.some(function (x) { return mins >= x[0] && mins <= x[1]; });
   }
 
