@@ -178,20 +178,21 @@ function hopeIsLive() {
   setInterval(update, 60000); // re-check every minute so it flips on/off automatically
 })();
 
-// ===== Sermons page (live/featured player + video library) =====
-// Only runs on sermons.html (keys off #sermonGrid). Loads recent uploads from
-// the Worker as a click-to-play thumbnail grid; during a service window it
-// swaps the featured slot to the live stream. Classes are namespaced "slib-"
-// to avoid colliding with the homepage's ".sermon-card".
+// ===== Sermons page (video library + separate live section) =====
+// Only runs on sermons.html (keys off #sermonGrid). Renders a click-to-play
+// grid of past sermons, and shows a separate live section only while a service
+// is actually streaming. Classes are namespaced "slib-" to avoid colliding
+// with the homepage's ".sermon-card".
 (function () {
   var grid = document.getElementById('sermonGrid');
   if (!grid) return;
-  var featured = document.getElementById('sermonFeatured');
+  var liveSection = document.getElementById('sermonLive');
+  var livePlayer = document.getElementById('sermonLivePlayer');
   var loadMore = document.getElementById('sermonLoadMore');
   var CHANNEL_URL = "https://youtube.com/@hopebaptistchurch9868";
   var nextPage = "";
   var loading = false;
-  var firstVideo = null;
+  var loadedAny = false;
 
   function esc(s) {
     return String(s == null ? "" : s)
@@ -225,56 +226,43 @@ function hopeIsLive() {
       requestFs(player);
     });
   }
-  function thumbButton(v, large) {
-    return '<button class="slib-thumb' + (large ? ' slib-thumb-lg' : '') +
-      '" type="button" aria-label="Play ' + esc(v.title) + '">' +
-      '<img ' + (large ? '' : 'loading="lazy" ') + 'src="' + esc(v.thumb) + '" alt="' + esc(v.title) + '">' +
-      '<span class="slib-play" aria-hidden="true"></span></button>';
-  }
 
   function card(v) {
     var el = document.createElement('div');
     el.className = 'slib-card';
-    el.innerHTML = thumbButton(v, false) +
+    el.innerHTML =
+      '<button class="slib-thumb" type="button" aria-label="Play ' + esc(v.title) + '">' +
+      '<img loading="lazy" src="' + esc(v.thumb) + '" alt="' + esc(v.title) + '">' +
+      '<span class="slib-play" aria-hidden="true"></span></button>' +
       '<div class="slib-meta"><p class="slib-title">' + esc(v.title) + '</p>' +
       '<p class="slib-date">' + esc(fmtDate(v.publishedAt)) + '</p></div>';
     wirePlay(el.querySelector('.slib-thumb'), v.id, v.title);
     return el;
   }
 
-  function renderFeatured(data) {
-    if (!featured) return;
-    if (data && data.live && data.videoId) {
-      featured.innerHTML =
-        '<p class="slib-featured-label slib-live"><span class="live-dot" aria-hidden="true"></span>Live now</p>' +
-        playerHtml(data.videoId, 'Live service', false);
-      return;
-    }
-    if (firstVideo) {
-      featured.innerHTML =
-        '<p class="slib-featured-label">Latest Sermon</p>' +
-        '<div class="slib-card slib-card-lg">' + thumbButton(firstVideo, true) +
-        '<div class="slib-meta"><p class="slib-title">' + esc(firstVideo.title) + '</p>' +
-        '<p class="slib-date">' + esc(fmtDate(firstVideo.publishedAt)) + '</p></div></div>';
-      wirePlay(featured.querySelector('.slib-thumb'), firstVideo.id, firstVideo.title);
-    } else {
-      featured.innerHTML = '';
-    }
+  // Live section: only during service windows, and only if the stream is
+  // actually on. Hidden entirely otherwise.
+  function showLive(id) {
+    if (liveSection.dataset.vid === id) { liveSection.style.display = ''; return; }
+    liveSection.dataset.vid = id;
+    livePlayer.innerHTML = playerHtml(id, 'Live service', false);
+    liveSection.style.display = '';
   }
-
-  // Only spend the expensive live-status call during service windows.
-  function featureLiveOrLatest() {
-    if (HOPE_WORKER_URL && typeof hopeIsLive === 'function' && hopeIsLive()) {
-      fetch(HOPE_WORKER_URL)
-        .then(function (r) { return r.json(); })
-        .then(function (d) { renderFeatured(d); })
-        .catch(function () { renderFeatured(null); });
-    } else {
-      renderFeatured(null);
-    }
+  function hideLive() {
+    if (liveSection.style.display === 'none') return;
+    liveSection.style.display = 'none';
+    livePlayer.innerHTML = '';
+    liveSection.dataset.vid = '';
   }
-
-  var loadedAny = false;
+  function checkLive() {
+    if (!liveSection || !livePlayer) return;
+    var inWindow = HOPE_WORKER_URL && typeof hopeIsLive === 'function' && hopeIsLive();
+    if (!inWindow) { hideLive(); return; }
+    fetch(HOPE_WORKER_URL)
+      .then(function (r) { return r.json(); })
+      .then(function (d) { if (d && d.live && d.videoId) { showLive(d.videoId); } else { hideLive(); } })
+      .catch(function () { /* leave current state on a transient error */ });
+  }
 
   function loadVideos() {
     if (loading) return;
@@ -282,17 +270,8 @@ function hopeIsLive() {
     if (loadMore) { loadMore.textContent = 'Loading...'; loadMore.disabled = true; }
     var url = HOPE_WORKER_URL + '/videos' + (nextPage ? ('?page=' + encodeURIComponent(nextPage)) : '');
     fetch(url).then(function (r) { return r.json(); }).then(function (d) {
-      var vids = d.videos || [];
-      if (!loadedAny) {
-        grid.innerHTML = '';          // clear the "Loading sermons..." placeholder
-        loadedAny = true;
-        if (vids.length) {
-          firstVideo = vids[0];
-          featureLiveOrLatest();
-          vids = vids.slice(1);       // the latest is featured above; don't repeat it in the grid
-        }
-      }
-      vids.forEach(function (v) { grid.appendChild(card(v)); });
+      if (!loadedAny) { grid.innerHTML = ''; loadedAny = true; } // clear the loading placeholder
+      (d.videos || []).forEach(function (v) { grid.appendChild(card(v)); });
       nextPage = d.nextPage || "";
       loading = false;
       if (loadMore) {
@@ -300,7 +279,7 @@ function hopeIsLive() {
         loadMore.textContent = 'Load More';
         loadMore.style.display = nextPage ? 'inline-flex' : 'none';
       }
-      if (!grid.children.length && !firstVideo) {
+      if (!grid.children.length) {
         grid.innerHTML = '<p class="slib-error">No sermons to show yet. <a href="' + CHANNEL_URL +
           '" target="_blank" rel="noopener">Visit our YouTube channel</a>.</p>';
       }
@@ -308,8 +287,7 @@ function hopeIsLive() {
       loading = false;
       if (loadMore) loadMore.style.display = 'none';
       if (!loadedAny) { grid.innerHTML = ''; loadedAny = true; }
-      renderFeatured(null);
-      if (!grid.children.length && !firstVideo) {
+      if (!grid.children.length) {
         grid.innerHTML = '<p class="slib-error">Sermons could not be loaded right now. ' +
           '<a href="' + CHANNEL_URL + '" target="_blank" rel="noopener">Watch on YouTube</a>.</p>';
       }
@@ -318,4 +296,6 @@ function hopeIsLive() {
 
   if (loadMore) loadMore.addEventListener('click', loadVideos);
   loadVideos();
+  checkLive();
+  setInterval(checkLive, 60000); // show/hide the live section automatically
 })();

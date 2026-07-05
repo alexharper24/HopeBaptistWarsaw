@@ -76,14 +76,15 @@
 
 <div class="slib-wrap">
 
- <!-- Featured: the live stream during a service, otherwise the latest sermon. -->
- <div id="sermonFeatured" class="slib-featured">
- <p class="slib-featured-label">Latest Sermon</p>
- <div class="slib-featured-loading">Loading the latest sermon...</div>
- </div>
+ <!-- Live: only shown while a service is actually streaming. -->
+ <section id="sermonLive" class="slib-section slib-live-section" style="display:none;">
+ <h2 class="slib-heading slib-heading-live"><span class="live-dot" aria-hidden="true"></span>Live Now</h2>
+ <div id="sermonLivePlayer"></div>
+ </section>
 
- <section class="slib-lib">
- <h2 class="slib-lib-title">Recent Sermons</h2>
+ <!-- Library of past sermons. -->
+ <section class="slib-section">
+ <h2 class="slib-heading">Past Sermons</h2>
  <div id="sermonGrid" class="slib-grid">
  <div class="slib-loading">Loading sermons...</div>
  </div>
