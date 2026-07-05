@@ -103,6 +103,10 @@ function toggleVerse(el) {
   var CHANNEL_URL = "https://youtube.com/@hopebaptistchurch9868";
   var LIVE_URL = "https://youtube.com/@hopebaptistchurch9868/live";
   var TZ = "America/Indiana/Indianapolis"; // Warsaw, IN (Eastern)
+  // Optional real-time confirmation. Paste the Cloudflare Worker URL here after
+  // deploying live-check-worker/ to switch from schedule-guess to actual YouTube
+  // live detection. Left blank, the schedule alone drives the indicator.
+  var LIVE_CHECK_URL = "";
   var btns = document.querySelectorAll('.watch-online');
   if (!btns.length) return;
   btns.forEach(function (a) { a.dataset.defaultHtml = a.innerHTML; });
@@ -133,12 +137,11 @@ function toggleVerse(el) {
     return w.some(function (x) { return mins >= x[0] && mins <= x[1]; });
   }
 
-  function update() {
-    var live = isLive();
+  function render(live, liveUrl) {
     btns.forEach(function (a) {
       if (live) {
         a.classList.add('is-live');
-        a.setAttribute('href', LIVE_URL);
+        a.setAttribute('href', liveUrl);
         a.setAttribute('target', '_blank');
         a.setAttribute('rel', 'noopener');
         a.dataset.live = "1";
@@ -152,6 +155,23 @@ function toggleVerse(el) {
         a.innerHTML = a.dataset.defaultHtml;
       }
     });
+  }
+
+  function update() {
+    var scheduled = isLive();
+    // Outside service windows: never call the API (saves quota).
+    // Inside a window with no Worker configured: trust the schedule.
+    if (!scheduled || !LIVE_CHECK_URL) {
+      render(scheduled, LIVE_URL);
+      return;
+    }
+    // Inside a window with a Worker: confirm the stream is actually on,
+    // and deep-link to the exact live video. Fall back to the schedule
+    // guess if the check fails.
+    fetch(LIVE_CHECK_URL)
+      .then(function (r) { return r.json(); })
+      .then(function (d) { render(!!d.live, d.watchUrl || LIVE_URL); })
+      .catch(function () { render(true, LIVE_URL); });
   }
 
   update();
