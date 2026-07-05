@@ -207,14 +207,22 @@ function hopeIsLive() {
     return '<div class="slib-player"><iframe src="https://www.youtube-nocookie.com/embed/' +
       encodeURIComponent(id) + '?rel=0' + (autoplay ? '&autoplay=1' : '') +
       '" title="' + esc(title) +
-      '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
+      '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen></iframe></div>';
   }
-  // Replace a tapped thumbnail button with its player (loads iframe on demand).
+  // Go fullscreen if the browser allows it (desktop). On iOS this no-ops and the
+  // video plays inline; YouTube's own fullscreen button still works there.
+  function requestFs(el) {
+    var fn = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+    if (fn) { try { fn.call(el); } catch (e) {} }
+  }
+  // Replace a tapped thumbnail button with its player, then request fullscreen.
   function wirePlay(btn, id, title) {
     btn.addEventListener('click', function () {
       var wrap = document.createElement('div');
       wrap.innerHTML = playerHtml(id, title, true);
-      btn.parentNode.replaceChild(wrap.firstChild, btn);
+      var player = wrap.firstChild;
+      btn.parentNode.replaceChild(player, btn);
+      requestFs(player);
     });
   }
   function thumbButton(v, large) {

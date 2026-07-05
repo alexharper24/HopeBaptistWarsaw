@@ -65,7 +65,9 @@ async function handleLive(env, ctx) {
   return resp;
 }
 
-// Recent uploads (sermon library), paginated.
+// Recent uploads (sermon library), paginated. Only returns videos that can
+// actually be watched: public, embeddable, fully processed, and not a live or
+// upcoming broadcast (ended live streams with no saved recording are excluded).
 async function handleVideos(url, env, ctx) {
   const pageToken = url.searchParams.get("page") || "";
   const cache = caches.default;
@@ -78,19 +80,55 @@ async function handleVideos(url, env, ctx) {
   try {
     let api =
       "https://www.googleapis.com/youtube/v3/playlistItems" +
-      "?part=snippet&maxResults=12&playlistId=" + UPLOADS_PLAYLIST +
+      "?part=snippet&maxResults=15&playlistId=" + UPLOADS_PLAYLIST +
       "&key=" + env.YT_API_KEY;
     if (pageToken) api += "&pageToken=" + encodeURIComponent(pageToken);
     const data = await (await fetch(api)).json();
     nextPage = data.nextPageToken || null;
+
+    const raw = {};
+    const ids = [];
     (data.items || []).forEach(function (it) {
       const s = it.snippet || {};
       const vid = s.resourceId && s.resourceId.videoId;
-      const th = s.thumbnails && (s.thumbnails.medium || s.thumbnails.high || s.thumbnails.default);
-      if (!vid || !th) return; // skip private/deleted entries
+      if (!vid) return;
       if (s.title === "Private video" || s.title === "Deleted video") return;
-      videos.push({ id: vid, title: s.title, publishedAt: s.publishedAt, thumb: th.url });
+      const th = s.thumbnails && (s.thumbnails.medium || s.thumbnails.high || s.thumbnails.default);
+      raw[vid] = { id: vid, title: s.title, publishedAt: s.publishedAt, thumb: th ? th.url : "" };
+      ids.push(vid);
     });
+
+    if (ids.length) {
+      try {
+        // One extra call (1 unit) to check each video's real status.
+        const vapi =
+          "https://www.googleapis.com/youtube/v3/videos" +
+          "?part=status,snippet&id=" + ids.join(",") +
+          "&key=" + env.YT_API_KEY;
+        const vdata = await (await fetch(vapi)).json();
+        const byId = {};
+        (vdata.items || []).forEach(function (v) { byId[v.id] = v; });
+        ids.forEach(function (id) {
+          const v = byId[id];
+          if (!v || !raw[id]) return;
+          const st = v.status || {};
+          const sn = v.snippet || {};
+          const watchable =
+            st.privacyStatus === "public" &&
+            st.embeddable !== false &&
+            st.uploadStatus === "processed" &&
+            sn.liveBroadcastContent === "none";
+          if (!watchable) return;
+          // Use the current (non-live) thumbnail variant when available.
+          const th = sn.thumbnails && (sn.thumbnails.medium || sn.thumbnails.high || sn.thumbnails.default);
+          if (th) raw[id].thumb = th.url;
+          videos.push(raw[id]);
+        });
+      } catch (_) {
+        // If the status lookup fails, fall back to the unfiltered list.
+        videos = ids.map(function (id) { return raw[id]; });
+      }
+    }
   } catch (_) {
     // Fail closed: return an empty list; the site shows a fallback link.
   }
