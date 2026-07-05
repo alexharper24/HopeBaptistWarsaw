@@ -1,0 +1,14 @@
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Local dev
+node_modules/
+*.log
+.cache/
+
+# Claude Code local settings (keep CLAUDE.md tracked; ignore local state)
+.claude/

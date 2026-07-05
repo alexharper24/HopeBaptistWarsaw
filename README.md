@@ -1,41 +1,85 @@
-# Hope Baptist Church Website (multi-page)
+# Hope Baptist Church Website
 
-A fast, SEO-friendly static website. Each page is its own file with its own
-title, description, and structured data, so search engines and AI assistants
-can index every page on its own URL.
+The website for Hope Baptist Church, Warsaw, Indiana, live at
+**https://hopebaptistwarsaw.org**.
 
-## Files
-- `index.html` ........ Home
-- `gospel.html` ....... What is the Gospel?
-- `beliefs.html` ...... What We Believe (statement of faith)
-- `ministries.html` ... Scripture Publishing Ministry
-- `style.css` ......... shared styles (edit once, applies everywhere)
-- `main.js` ........... shared script (nav, scripture expand, scrolling)
-- `img/` .............. all photos and the logo
-- `sitemap.xml`, `robots.txt` ... help search engines find every page
-- `CNAME` ............. custom domain for GitHub Pages
-- `.nojekyll` ......... tells GitHub Pages to serve all files as-is
+It is a static, multi-page site (plain HTML, CSS, and JavaScript) hosted free on
+GitHub Pages. There is no build step: you edit the files and push, and the live
+site updates automatically.
 
-## Hosting on GitHub Pages (free)
-1. Create a public repository.
-2. Upload EVERYTHING in this folder, keeping the `img/` folder intact.
-   Upload all files at the top level (so `index.html` is at the repo root).
-   The single most common mistake is forgetting to upload the image files,
-   which shows broken images on the live site. Upload the whole folder.
-3. Settings -> Pages -> Deploy from a branch -> main -> / (root).
-4. The `CNAME` file already points the site at hopebaptistwarsaw.org. In
-   GoDaddy DNS, add four A records on @ to GitHub's IPs
-   (185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153)
-   and a CNAME on www to <username>.github.io.
-5. Check "Enforce HTTPS" for free SSL.
+> Working on this in Claude Code? Read **CLAUDE.md** first. It has the full
+> architecture, conventions, and the gotchas that are easy to break.
 
-## Editing later
-- Change words/photos on a page: edit that page's `.html` file.
-- Change colors, fonts, spacing for the whole site: edit `style.css`.
-- Add a new photo: drop it in `img/` and reference it as `img/yourphoto.jpg`.
-  Always upload new image files to GitHub along with the HTML.
+## Pages
 
-## After it's live (helps people find the church)
-- Set up a free Google Business Profile for the church address.
-- Add the site in Google Search Console and submit `sitemap.xml`.
-- Link the site from the church Facebook page.
+- `index.html` - Home
+- `gospel.html` - What is the Gospel?
+- `beliefs.html` - What We Believe (statement of faith)
+- `ministries.html` - Scripture Publishing Ministry
+
+Shared across all pages: `style.css` (all styling), `main.js` (all behavior),
+`img/` (all photos and the logo).
+
+## Preview locally
+
+No build needed. Serve the folder and open it in a browser:
+
+```bash
+python3 -m http.server 8000
+# open http://localhost:8000
+```
+
+Test on a phone too (or the browser device emulator), since the site is
+phone-first and has had mobile-only issues in the past.
+
+## Connect to GitHub and work in Claude Code
+
+If the repository already exists on GitHub (it does, this site is live), clone it
+and open it in Claude Code:
+
+```bash
+git clone https://github.com/<your-username>/<your-repo>.git
+cd <your-repo>
+claude            # start Claude Code in the project folder
+```
+
+If you are starting the repo fresh from this folder instead:
+
+```bash
+git init
+git add -A
+git commit -m "Initial commit: Hope Baptist Church website"
+git branch -M main
+git remote add origin https://github.com/<your-username>/<your-repo>.git
+git push -u origin main
+```
+
+Claude Code automatically reads `CLAUDE.md`, so it will pick up the project
+conventions on its own.
+
+## Deploy (automatic on push)
+
+GitHub Pages is configured to deploy from the `main` branch, root folder. Any
+push to `main` publishes within a minute or two:
+
+```bash
+git add -A
+git commit -m "describe your change"
+git push
+```
+
+One-time GitHub settings (already done for the live site): Settings -> Pages ->
+Deploy from a branch -> `main` / root, and check "Enforce HTTPS". The `CNAME`
+file keeps the custom domain attached; do not delete it.
+
+## Most important rule
+
+When you add or change a **photo**, commit the file in `img/` along with the
+HTML. HTML going up without its images is the number one cause of broken images
+on the live site. After deploying, confirm an image URL such as
+`https://hopebaptistwarsaw.org/img/logo.jpg` loads directly.
+
+## After changes go live
+
+- Google Search Console: submit `sitemap.xml` so search engines re-crawl.
+- Keep a Google Business Profile for the church address for local search.

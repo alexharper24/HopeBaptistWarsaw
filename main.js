@@ -94,3 +94,66 @@ function toggleVerse(el) {
   el.parentNode.insertBefore(div, el.nextSibling);
   el.classList.add('verse-active');
 }
+
+// ===== Live service indicator =====
+// During service times (church local time, Eastern) the "Watch Online" buttons
+// become a pulsing "Watch Live" link straight to the YouTube live stream.
+// Outside those windows they behave normally (Coming Soon).
+(function () {
+  var CHANNEL_URL = "https://youtube.com/@hopebaptistchurch9868";
+  var LIVE_URL = "https://youtube.com/@hopebaptistchurch9868/live";
+  var TZ = "America/Indiana/Indianapolis"; // Warsaw, IN (Eastern)
+  var btns = document.querySelectorAll('.watch-online');
+  if (!btns.length) return;
+  btns.forEach(function (a) { a.dataset.defaultHtml = a.innerHTML; });
+
+  function churchParts() {
+    var p = new Intl.DateTimeFormat("en-US", {
+      timeZone: TZ, weekday: "long", day: "numeric",
+      hour: "2-digit", minute: "2-digit", hour12: false
+    }).formatToParts(new Date());
+    var o = {};
+    p.forEach(function (x) { o[x.type] = x.value; });
+    return o;
+  }
+
+  // Service start times as minutes-since-midnight, with a window from
+  // 5 min before start to 95 min after (covers the whole service).
+  function isLive() {
+    var t = churchParts();
+    var mins = parseInt(t.hour, 10) * 60 + parseInt(t.minute, 10);
+    var day = parseInt(t.day, 10);
+    var w = [];
+    if (t.weekday === "Sunday") {
+      w.push([655, 755]);                             // Morning service 11:00 AM
+      w.push(day <= 7 ? [775, 875] : [1015, 1115]);   // Evening: 1:00 PM first Sunday, else 5:00 PM
+    } else if (t.weekday === "Wednesday") {
+      w.push([1105, 1205]);                           // Wednesday 6:30 PM
+    }
+    return w.some(function (x) { return mins >= x[0] && mins <= x[1]; });
+  }
+
+  function update() {
+    var live = isLive();
+    btns.forEach(function (a) {
+      if (live) {
+        a.classList.add('is-live');
+        a.setAttribute('href', LIVE_URL);
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', 'noopener');
+        a.dataset.live = "1";
+        a.innerHTML = '<span class="live-dot" aria-hidden="true"></span>Watch Live';
+      } else {
+        a.classList.remove('is-live');
+        a.setAttribute('href', CHANNEL_URL);
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', 'noopener');
+        a.dataset.live = "";
+        a.innerHTML = a.dataset.defaultHtml;
+      }
+    });
+  }
+
+  update();
+  setInterval(update, 60000); // re-check every minute so it flips on/off automatically
+})();
