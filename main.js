@@ -266,6 +266,8 @@ function hopeIsLive() {
     }
   }
 
+  var loadedAny = false;
+
   function loadVideos() {
     if (loading) return;
     loading = true;
@@ -273,7 +275,15 @@ function hopeIsLive() {
     var url = HOPE_WORKER_URL + '/videos' + (nextPage ? ('?page=' + encodeURIComponent(nextPage)) : '');
     fetch(url).then(function (r) { return r.json(); }).then(function (d) {
       var vids = d.videos || [];
-      if (!firstVideo && vids.length) { firstVideo = vids[0]; featureLiveOrLatest(); }
+      if (!loadedAny) {
+        grid.innerHTML = '';          // clear the "Loading sermons..." placeholder
+        loadedAny = true;
+        if (vids.length) {
+          firstVideo = vids[0];
+          featureLiveOrLatest();
+          vids = vids.slice(1);       // the latest is featured above; don't repeat it in the grid
+        }
+      }
       vids.forEach(function (v) { grid.appendChild(card(v)); });
       nextPage = d.nextPage || "";
       loading = false;
@@ -282,15 +292,16 @@ function hopeIsLive() {
         loadMore.textContent = 'Load More';
         loadMore.style.display = nextPage ? 'inline-flex' : 'none';
       }
-      if (!grid.children.length) {
+      if (!grid.children.length && !firstVideo) {
         grid.innerHTML = '<p class="slib-error">No sermons to show yet. <a href="' + CHANNEL_URL +
           '" target="_blank" rel="noopener">Visit our YouTube channel</a>.</p>';
       }
     }).catch(function () {
       loading = false;
       if (loadMore) loadMore.style.display = 'none';
+      if (!loadedAny) { grid.innerHTML = ''; loadedAny = true; }
       renderFeatured(null);
-      if (!grid.children.length) {
+      if (!grid.children.length && !firstVideo) {
         grid.innerHTML = '<p class="slib-error">Sermons could not be loaded right now. ' +
           '<a href="' + CHANNEL_URL + '" target="_blank" rel="noopener">Watch on YouTube</a>.</p>';
       }
