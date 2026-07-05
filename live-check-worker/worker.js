@@ -13,7 +13,7 @@
 const CHANNEL_ID = "UCvbDv_cxJDA7OGYsRVSTBRg"; // youtube.com/@hopebaptistchurch9868
 const UPLOADS_PLAYLIST = "UUvbDv_cxJDA7OGYsRVSTBRg"; // channel uploads playlist = channel id with UC -> UU
 const ALLOW_ORIGIN = "https://hopebaptistwarsaw.org";
-const CACHE_VERSION = "v2";        // bump to invalidate edge-cached responses after a logic change
+const CACHE_VERSION = "v3";        // bump to invalidate edge-cached responses after a logic change
 const LIVE_CACHE_SECONDS = 120;    // live check is 100 quota units, so cache it
 const VIDEOS_CACHE_SECONDS = 600;  // sermon list; short enough that new sermons appear promptly
 
@@ -21,6 +21,16 @@ const CORS = {
   "Access-Control-Allow-Origin": ALLOW_ORIGIN,
   "Content-Type": "application/json",
 };
+
+// Parse an ISO 8601 duration (e.g. PT1H2M3S) into seconds. Returns 0 for a
+// missing or zero-length duration, which is what ended live streams with no
+// saved recording report.
+function isoDurationSeconds(d) {
+  if (!d) return 0;
+  const m = /P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?/.exec(d);
+  if (!m) return 0;
+  return (+(m[1] || 0)) * 86400 + (+(m[2] || 0)) * 3600 + (+(m[3] || 0)) * 60 + (+(m[4] || 0));
+}
 
 export default {
   async fetch(request, env, ctx) {
@@ -104,7 +114,7 @@ async function handleVideos(url, env, ctx) {
         // One extra call (1 unit) to check each video's real status.
         const vapi =
           "https://www.googleapis.com/youtube/v3/videos" +
-          "?part=status,snippet&id=" + ids.join(",") +
+          "?part=status,snippet,contentDetails&id=" + ids.join(",") +
           "&key=" + env.YT_API_KEY;
         const vdata = await (await fetch(vapi)).json();
         const byId = {};
@@ -114,15 +124,15 @@ async function handleVideos(url, env, ctx) {
           if (!v || !raw[id]) return;
           const st = v.status || {};
           const sn = v.snippet || {};
-          const th = sn.thumbnails && (sn.thumbnails.medium || sn.thumbnails.high || sn.thumbnails.default);
-          const thumbUrl = th ? th.url : (raw[id].thumb || "");
+          const cd = v.contentDetails || {};
           const watchable =
             st.privacyStatus === "public" &&
             st.embeddable !== false &&
             st.uploadStatus === "processed" &&
             sn.liveBroadcastContent === "none" &&
-            thumbUrl.indexOf("_live") === -1; // exclude live/offline broadcast placeholders
+            isoDurationSeconds(cd.duration) > 0; // exclude ended live streams with no saved recording
           if (!watchable) return;
+          const th = sn.thumbnails && (sn.thumbnails.medium || sn.thumbnails.high || sn.thumbnails.default);
           if (th) raw[id].thumb = th.url;
           videos.push(raw[id]);
         });
