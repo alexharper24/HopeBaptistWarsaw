@@ -613,3 +613,35 @@ a { text-decoration: none; color: inherit; }
   color: #ff8a80 !important;
   font-weight: 700;
 }
+
+/* ── Sermons library (sermons.html) ── namespaced slib- to avoid clashing
+   with the homepage .sermon-card. Cards are transparent (on the white body),
+   so no dark-mode override is needed. */
+.slib-wrap { max-width: 1120px; margin: 0 auto; padding: 48px 24px 64px; }
+.slib-featured { max-width: 760px; margin: 0 auto 48px; }
+.slib-featured-label { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 12px; }
+.slib-featured-label.slib-live { color: #c0392b; }
+.slib-featured-loading { color: var(--text-light); padding: 20px 0; }
+.slib-lib-title { font-size: 1.6rem; color: var(--navy); margin-bottom: 24px; text-align: center; }
+.slib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; }
+.slib-card { display: flex; flex-direction: column; }
+.slib-thumb { position: relative; display: block; width: 100%; padding: 0; border: none; background: var(--navy-dark); cursor: pointer; border-radius: 10px; overflow: hidden; }
+.slib-thumb img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; transition: transform 0.3s ease; }
+.slib-thumb:hover img { transform: scale(1.04); }
+.slib-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 58px; height: 58px; border-radius: 50%; background: rgba(30,48,84,0.82); display: flex; align-items: center; justify-content: center; transition: background 0.25s ease, transform 0.25s ease; }
+.slib-thumb:hover .slib-play { background: var(--gold); transform: translate(-50%, -50%) scale(1.08); }
+.slib-play::after { content: ''; border-style: solid; border-width: 9px 0 9px 15px; border-color: transparent transparent transparent #ffffff; margin-left: 4px; }
+.slib-meta { padding: 12px 2px 0; }
+.slib-title { font-family: 'Lora', Georgia, serif; font-size: 1.02rem; color: var(--navy); font-weight: 600; line-height: 1.35; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.slib-card-lg .slib-title { font-size: 1.25rem; }
+.slib-date { font-size: 0.85rem; color: var(--text-light); }
+.slib-player { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #000; }
+.slib-player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.slib-actions { text-align: center; margin-top: 36px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.slib-yt-link { color: var(--navy); font-weight: 600; text-decoration: underline; font-size: 0.95rem; }
+.slib-error { grid-column: 1 / -1; text-align: center; color: var(--text-light); padding: 24px; }
+.slib-error a { color: var(--navy); text-decoration: underline; }
+@media (max-width: 900px) {
+  .slib-wrap { padding: 32px 20px 48px; }
+  .slib-grid { gap: 18px; }
+}

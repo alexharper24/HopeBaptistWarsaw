@@ -1,12 +1,23 @@
 # Live check Worker
 
-A tiny Cloudflare Worker that reports whether the church's YouTube channel is
-**actually live right now**. The website (`main.js`) uses it to upgrade the
-"Watch Live" indicator from a schedule based guess to real detection.
+A tiny Cloudflare Worker for the church website. It has two JSON endpoints:
+
+- `GET /` -> **live status**: `{ live, videoId, watchUrl }`. Powers the
+  "Watch Live" indicator (`main.js`), upgrading it from a schedule based guess
+  to real detection.
+- `GET /videos` -> **recent uploads** for the sermons page:
+  `{ videos: [{id,title,publishedAt,thumb}], nextPage }`. Accepts `?page=<token>`
+  for the "Load More" button.
 
 The YouTube API key is held here as a Worker **secret**, so it never appears in
 the public website. This is the whole reason the Worker exists: a static
 GitHub Pages site cannot safely hold an API key.
+
+Quota: the live check costs 100 units and is cached 120s; the video list costs
+just 1 unit and is cached 1 hour. Both stay comfortably within the free 10,000
+units/day.
+
+**After changing `worker.js`, redeploy with `npx wrangler deploy`.**
 
 ## How it fits together
 

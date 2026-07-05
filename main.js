@@ -95,46 +95,49 @@ function toggleVerse(el) {
   el.classList.add('verse-active');
 }
 
+// ===== Shared: Cloudflare Worker + church service schedule =====
+// The Worker returns live status ("/") and the sermon list ("/videos").
+// Used by both the live "Watch" button and the sermons page. If the account's
+// workers.dev subdomain ever changes, update this one URL.
+var HOPE_WORKER_URL = "https://hope-live-check.alexharper.workers.dev";
+var HOPE_TZ = "America/Indiana/Indianapolis"; // Warsaw, IN (Eastern)
+
+function hopeChurchParts() {
+  var p = new Intl.DateTimeFormat("en-US", {
+    timeZone: HOPE_TZ, weekday: "long", day: "numeric",
+    hour: "2-digit", minute: "2-digit", hour12: false
+  }).formatToParts(new Date());
+  var o = {};
+  p.forEach(function (x) { o[x.type] = x.value; });
+  return o;
+}
+
+// True during a streamed service window. Windows are minutes-since-midnight,
+// 5 min before start to 95 min after. Service times are defined here ONCE and
+// shared by the live button and the sermons page. Edit here to change them.
+function hopeIsLive() {
+  var t = hopeChurchParts();
+  var mins = parseInt(t.hour, 10) * 60 + parseInt(t.minute, 10);
+  var day = parseInt(t.day, 10);
+  var w = [];
+  if (t.weekday === "Sunday") {
+    w.push([655, 755]);                             // Morning service 11:00 AM
+    w.push(day <= 7 ? [775, 875] : [1015, 1115]);   // Afternoon 1:00 PM first Sunday, else evening 5:00 PM
+  }
+  // Wednesday 6:30 PM service intentionally disabled for now.
+  return w.some(function (x) { return mins >= x[0] && mins <= x[1]; });
+}
+
 // ===== Live service indicator =====
-// During service times (church local time, Eastern) the "Watch Online" buttons
-// become a pulsing "Watch Live" link straight to the YouTube live stream.
-// Outside those windows they behave normally (Coming Soon).
+// During service windows the "Watch Online" buttons become a pulsing
+// "Watch Live" link. When HOPE_WORKER_URL is set, the actual stream is
+// confirmed and the link deep-links to the exact live video.
 (function () {
   var CHANNEL_URL = "https://youtube.com/@hopebaptistchurch9868";
   var LIVE_URL = "https://youtube.com/@hopebaptistchurch9868/live";
-  var TZ = "America/Indiana/Indianapolis"; // Warsaw, IN (Eastern)
-  // Optional real-time confirmation. Paste the Cloudflare Worker URL here after
-  // deploying live-check-worker/ to switch from schedule-guess to actual YouTube
-  // live detection. Left blank, the schedule alone drives the indicator.
-  var LIVE_CHECK_URL = "https://hope-live-check.alexharper.workers.dev";
   var btns = document.querySelectorAll('.watch-online');
   if (!btns.length) return;
   btns.forEach(function (a) { a.dataset.defaultHtml = a.innerHTML; });
-
-  function churchParts() {
-    var p = new Intl.DateTimeFormat("en-US", {
-      timeZone: TZ, weekday: "long", day: "numeric",
-      hour: "2-digit", minute: "2-digit", hour12: false
-    }).formatToParts(new Date());
-    var o = {};
-    p.forEach(function (x) { o[x.type] = x.value; });
-    return o;
-  }
-
-  // Service start times as minutes-since-midnight, with a window from
-  // 5 min before start to 95 min after (covers the whole service).
-  function isLive() {
-    var t = churchParts();
-    var mins = parseInt(t.hour, 10) * 60 + parseInt(t.minute, 10);
-    var day = parseInt(t.day, 10);
-    var w = [];
-    if (t.weekday === "Sunday") {
-      w.push([655, 755]);                             // Morning service 11:00 AM
-      w.push(day <= 7 ? [775, 875] : [1015, 1115]);   // Afternoon 1:00 PM first Sunday, else evening 5:00 PM
-    }
-    // Wednesday 6:30 PM service intentionally disabled for now.
-    return w.some(function (x) { return mins >= x[0] && mins <= x[1]; });
-  }
 
   function render(live, liveUrl) {
     btns.forEach(function (a) {
@@ -157,17 +160,15 @@ function toggleVerse(el) {
   }
 
   function update() {
-    var scheduled = isLive();
+    var scheduled = hopeIsLive();
     // Outside service windows: never call the API (saves quota).
-    // Inside a window with no Worker configured: trust the schedule.
-    if (!scheduled || !LIVE_CHECK_URL) {
+    if (!scheduled || !HOPE_WORKER_URL) {
       render(scheduled, LIVE_URL);
       return;
     }
-    // Inside a window with a Worker: confirm the stream is actually on,
-    // and deep-link to the exact live video. Fall back to the schedule
-    // guess if the check fails.
-    fetch(LIVE_CHECK_URL)
+    // Inside a window: confirm the stream is actually on and deep-link to it.
+    // Fall back to the schedule guess if the check fails.
+    fetch(HOPE_WORKER_URL)
       .then(function (r) { return r.json(); })
       .then(function (d) { render(!!d.live, d.watchUrl || LIVE_URL); })
       .catch(function () { render(true, LIVE_URL); });
@@ -175,4 +176,127 @@ function toggleVerse(el) {
 
   update();
   setInterval(update, 60000); // re-check every minute so it flips on/off automatically
+})();
+
+// ===== Sermons page (live/featured player + video library) =====
+// Only runs on sermons.html (keys off #sermonGrid). Loads recent uploads from
+// the Worker as a click-to-play thumbnail grid; during a service window it
+// swaps the featured slot to the live stream. Classes are namespaced "slib-"
+// to avoid colliding with the homepage's ".sermon-card".
+(function () {
+  var grid = document.getElementById('sermonGrid');
+  if (!grid) return;
+  var featured = document.getElementById('sermonFeatured');
+  var loadMore = document.getElementById('sermonLoadMore');
+  var CHANNEL_URL = "https://youtube.com/@hopebaptistchurch9868";
+  var nextPage = "";
+  var loading = false;
+  var firstVideo = null;
+
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function fmtDate(iso) {
+    try {
+      return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    } catch (e) { return ""; }
+  }
+  // Privacy-enhanced embed (youtube-nocookie).
+  function playerHtml(id, title, autoplay) {
+    return '<div class="slib-player"><iframe src="https://www.youtube-nocookie.com/embed/' +
+      encodeURIComponent(id) + '?rel=0' + (autoplay ? '&autoplay=1' : '') +
+      '" title="' + esc(title) +
+      '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
+  }
+  // Replace a tapped thumbnail button with its player (loads iframe on demand).
+  function wirePlay(btn, id, title) {
+    btn.addEventListener('click', function () {
+      var wrap = document.createElement('div');
+      wrap.innerHTML = playerHtml(id, title, true);
+      btn.parentNode.replaceChild(wrap.firstChild, btn);
+    });
+  }
+  function thumbButton(v, large) {
+    return '<button class="slib-thumb' + (large ? ' slib-thumb-lg' : '') +
+      '" type="button" aria-label="Play ' + esc(v.title) + '">' +
+      '<img ' + (large ? '' : 'loading="lazy" ') + 'src="' + esc(v.thumb) + '" alt="' + esc(v.title) + '">' +
+      '<span class="slib-play" aria-hidden="true"></span></button>';
+  }
+
+  function card(v) {
+    var el = document.createElement('div');
+    el.className = 'slib-card';
+    el.innerHTML = thumbButton(v, false) +
+      '<div class="slib-meta"><p class="slib-title">' + esc(v.title) + '</p>' +
+      '<p class="slib-date">' + esc(fmtDate(v.publishedAt)) + '</p></div>';
+    wirePlay(el.querySelector('.slib-thumb'), v.id, v.title);
+    return el;
+  }
+
+  function renderFeatured(data) {
+    if (!featured) return;
+    if (data && data.live && data.videoId) {
+      featured.innerHTML =
+        '<p class="slib-featured-label slib-live"><span class="live-dot" aria-hidden="true"></span>Live now</p>' +
+        playerHtml(data.videoId, 'Live service', false);
+      return;
+    }
+    if (firstVideo) {
+      featured.innerHTML =
+        '<p class="slib-featured-label">Latest Sermon</p>' +
+        '<div class="slib-card slib-card-lg">' + thumbButton(firstVideo, true) +
+        '<div class="slib-meta"><p class="slib-title">' + esc(firstVideo.title) + '</p>' +
+        '<p class="slib-date">' + esc(fmtDate(firstVideo.publishedAt)) + '</p></div></div>';
+      wirePlay(featured.querySelector('.slib-thumb'), firstVideo.id, firstVideo.title);
+    } else {
+      featured.innerHTML = '';
+    }
+  }
+
+  // Only spend the expensive live-status call during service windows.
+  function featureLiveOrLatest() {
+    if (HOPE_WORKER_URL && typeof hopeIsLive === 'function' && hopeIsLive()) {
+      fetch(HOPE_WORKER_URL)
+        .then(function (r) { return r.json(); })
+        .then(function (d) { renderFeatured(d); })
+        .catch(function () { renderFeatured(null); });
+    } else {
+      renderFeatured(null);
+    }
+  }
+
+  function loadVideos() {
+    if (loading) return;
+    loading = true;
+    if (loadMore) { loadMore.textContent = 'Loading...'; loadMore.disabled = true; }
+    var url = HOPE_WORKER_URL + '/videos' + (nextPage ? ('?page=' + encodeURIComponent(nextPage)) : '');
+    fetch(url).then(function (r) { return r.json(); }).then(function (d) {
+      var vids = d.videos || [];
+      if (!firstVideo && vids.length) { firstVideo = vids[0]; featureLiveOrLatest(); }
+      vids.forEach(function (v) { grid.appendChild(card(v)); });
+      nextPage = d.nextPage || "";
+      loading = false;
+      if (loadMore) {
+        loadMore.disabled = false;
+        loadMore.textContent = 'Load More';
+        loadMore.style.display = nextPage ? 'inline-flex' : 'none';
+      }
+      if (!grid.children.length) {
+        grid.innerHTML = '<p class="slib-error">No sermons to show yet. <a href="' + CHANNEL_URL +
+          '" target="_blank" rel="noopener">Visit our YouTube channel</a>.</p>';
+      }
+    }).catch(function () {
+      loading = false;
+      if (loadMore) loadMore.style.display = 'none';
+      renderFeatured(null);
+      if (!grid.children.length) {
+        grid.innerHTML = '<p class="slib-error">Sermons could not be loaded right now. ' +
+          '<a href="' + CHANNEL_URL + '" target="_blank" rel="noopener">Watch on YouTube</a>.</p>';
+      }
+    });
+  }
+
+  if (loadMore) loadMore.addEventListener('click', loadVideos);
+  loadVideos();
 })();
