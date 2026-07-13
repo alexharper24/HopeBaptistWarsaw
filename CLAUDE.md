@@ -89,6 +89,8 @@ Icons are inline SVG (never an icon font — icon fonts failed to render reliabl
 
 7. **Doctrine is KJV-preferring, fundamental Baptist.** Do not soften, add, or change doctrinal statements without the church confirming. When in doubt, ask rather than guess.
 
+8. **Google Analytics tag must stay on every page.** Each page carries a GA4 `gtag.js` snippet (measurement ID `G-4V3LJ5EJ5T`) just before `</head>`. It has been silently dropped once by committing an older local copy, which flatlined analytics. Keep it on all pages, and add it to any new page. If traffic data stops, check this tag first.
+
 ## Feature notes
 
 ### Live service indicator (main.js, bottom)
