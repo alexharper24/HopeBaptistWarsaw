@@ -440,6 +440,21 @@ a { text-decoration: none; color: inherit; }
  border-color: var(--navy);
 }
 
+/* Static label pill. Looks like .scripture but is NOT interactive: no hover
+   change and no pointer cursor. Use for lists that are not clickable (ministry
+   focus areas, materials produced). Only .scripture (which expands a verse on
+   tap) should react to hover. */
+.tag {
+ display: inline-block;
+ background: linear-gradient(135deg, var(--cream) 0%, #eee9df 100%);
+ color: var(--navy);
+ font-size: 0.82rem; font-weight: 600;
+ padding: 5px 12px; border-radius: 20px;
+ font-style: italic;
+ border: 1px solid rgba(30,48,84,0.08);
+ cursor: default;
+}
+
 
 .verse-expanded {
  display: block;
@@ -687,10 +702,14 @@ a { text-decoration: none; color: inherit; }
 
 /* Titus Women detail layout (ministries-women.html) */
 .titus-detail { display: flex; gap: 28px; align-items: flex-start; }
-.titus-detail-img { flex: 0 0 300px; max-width: 300px; }
+.titus-detail-img { flex: 0 0 260px; max-width: 260px; }
 .titus-detail-img img { width: 100%; border-radius: 12px; box-shadow: var(--shadow); }
 .titus-detail-text { flex: 1; min-width: 0; }
+/* Keep the five focus tags on one line at desktop; wrap only on small screens. */
+.titus-tags { display: flex; flex-wrap: nowrap; gap: 8px; margin-bottom: 18px; }
+.titus-tags .tag { flex: 0 0 auto; white-space: nowrap; }
 @media (max-width: 700px) {
+  .titus-tags { flex-wrap: wrap; justify-content: center; }
   .titus-detail { flex-direction: column; align-items: center; text-align: center; }
   .titus-detail-img { flex-basis: auto; max-width: 260px; }
 }
