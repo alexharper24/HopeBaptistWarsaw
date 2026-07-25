@@ -19,21 +19,25 @@ The audience is ordinary church visitors and people searching for a church local
 ## File structure
 
 ```
-index.html        Home (hero, welcome/mission, 2026 focus, services+events, gallery, pastor, visit/contact)
-gospel.html       "What is the Gospel?" (God, Problem/Sin, Penalty, Payment, Decision)
-beliefs.html      "What We Believe" (12-point statement of faith)
-ministries.html   Scripture Publishing Ministry
-style.css         All styles for every page
-main.js           All shared behavior (nav, scroll, scripture expand, live indicator, modal)
-img/              All photos + logo
-sitemap.xml       Lists all four pages for search engines
-robots.txt        Points crawlers at the sitemap
-CNAME             Custom domain (hopebaptistwarsaw.org) for GitHub Pages
-.nojekyll         Tells GitHub Pages to serve files verbatim (no Jekyll)
-README.md         Human-facing setup/deploy notes
+index.html              Home (hero, welcome/mission, 2026 focus, Titus Women highlight, services+events, gallery, pastor, visit/contact)
+gospel.html             "What is the Gospel?" (God, Problem/Sin, Penalty, Payment, Decision)
+beliefs.html            "What We Believe" (12-point statement of faith)
+sermons.html            Sermons (live section + past-sermon library, driven by the Cloudflare Worker)
+ministries.html         Ministries hub (landing page: one card per ministry, links to detail pages)
+ministries-scripture.html  Scripture Publishing Ministry (detail page)
+ministries-women.html   Titus Women ministry (detail page; launching Oct 2026)
+style.css               All styles for every page
+main.js                 All shared behavior (nav, scroll, scripture expand, live indicator, sermons page, modal)
+img/                    All photos + logo
+live-check-worker/      Cloudflare Worker (YouTube live status + sermon list); see its README
+sitemap.xml             Lists all pages for search engines
+robots.txt              Points crawlers at the sitemap
+CNAME                   Custom domain (hopebaptistwarsaw.org) for GitHub Pages
+.nojekyll               Tells GitHub Pages to serve files verbatim (no Jekyll)
+README.md               Human-facing setup/deploy notes
 ```
 
-Every page shares the same header, mobile nav, footer, and Coming Soon modal markup. If you change one of those, change it in **all four** pages to keep them in sync.
+Every page shares the same header, mobile nav, footer, and Coming Soon modal markup. If you change one of those, change it in **all pages** to keep them in sync. **Ministries** in the nav points to the `ministries.html` hub; each ministry has its own `ministries-*.html` detail page, and new ministries are added as a card on the hub plus a detail page.
 
 ## Local development
 
