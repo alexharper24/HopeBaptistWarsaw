@@ -687,8 +687,10 @@ a { text-decoration: none; color: inherit; }
 .min-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
 .min-card-img { position: relative; aspect-ratio: 16 / 10; background: var(--cream); overflow: hidden; }
 .min-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.min-card-img.is-logo { background: #f4ebe7; }
-.min-card-img.is-logo img { object-fit: contain; padding: 16px; }
+/* Logo/emblem tiles sit on their own artwork background so the contained
+   square blends into the card instead of being letterboxed. */
+.min-card-img.is-logo { background: #f8f0eb; }
+.min-card-img.is-logo img { object-fit: contain; }
 .min-badge { position: absolute; top: 12px; left: 12px; z-index: 1; background: var(--gold); color: var(--navy-dark); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 5px 12px; border-radius: 20px; }
 .min-card-body { display: flex; flex-direction: column; flex: 1; padding: 24px 26px 26px; }
 .min-card-body h3 { font-size: 1.3rem; color: var(--navy); margin-bottom: 8px; }
