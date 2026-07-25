@@ -19,7 +19,9 @@ The audience is ordinary church visitors and people searching for a church local
 ## File structure
 
 ```
-index.html              Home (hero, welcome/mission, 2026 focus, Titus Women highlight, services+events, gallery, pastor, visit/contact)
+index.html              Home / landing page (hero, service strip, welcome teaser, 2026 focus, Titus Women highlight, Plan Your Visit CTA)
+our-church.html         Our Church (welcome/mission, meet our pastor, Life at Hope gallery, ministries teaser)
+visit.html              Visit (plan your visit, what to expect, contact/location, services + regular events)
 gospel.html             "What is the Gospel?" (God, Problem/Sin, Penalty, Payment, Decision)
 beliefs.html            "What We Believe" (12-point statement of faith)
 sermons.html            Sermons (live section + past-sermon library, driven by the Cloudflare Worker)
@@ -38,6 +40,8 @@ README.md               Human-facing setup/deploy notes
 ```
 
 Every page shares the same header, mobile nav, footer, and Coming Soon modal markup. If you change one of those, change it in **all pages** to keep them in sync. **Ministries** in the nav points to the `ministries.html` hub; each ministry has its own `ministries-*.html` detail page, and new ministries are added as a card on the hub plus a detail page.
+
+**Information architecture.** Every nav item is a real page: Our Church, The Gospel, What We Believe, Sermons, Ministries, Visit. There are deliberately **no homepage-anchor nav links** any more (the old `index.html#about` / `#events` / `#visit` items are gone); About/Pastor/Life moved to `our-church.html` and Events/Contact moved to `visit.html`. The homepage is a landing page that teases those pages rather than duplicating them, since duplicate text across two pages competes in search. The homepage keeps `id="about"` and `id="visit"` (plus an `#events` anchor) purely so old external links still land somewhere sensible.
 
 ## Local development
 

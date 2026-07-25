@@ -55,8 +55,8 @@ document.querySelectorAll('.mobile-nav a').forEach(function (a) {
   a.addEventListener('click', closeMobileNav);
 });
 
-// On load, if the URL has a hash (e.g. arriving at index.html#events from another page),
-// scroll to it with the header offset applied.
+// On load, if the URL has a hash (e.g. an older bookmark to index.html#visit, or
+// our-church.html#life), scroll to it with the header offset applied.
 window.addEventListener('load', function () {
   if (location.hash && location.hash.length > 1) {
     var el = document.getElementById(location.hash.slice(1));
