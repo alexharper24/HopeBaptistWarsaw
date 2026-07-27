@@ -134,7 +134,7 @@ a { text-decoration: none; color: inherit; }
 .service-strip-item strong { font-weight: 600; }
 
 /* ─── SECTIONS ─── */
-.section { padding: 76px 0; }
+.section { padding: 96px 0; }
 .section-alt { background: var(--cream); }
 .section-navy { background: var(--navy); color: var(--white); }
 
@@ -553,7 +553,7 @@ a { text-decoration: none; color: inherit; }
  .sermon-card-image { min-height: 180px; }
  .hero { min-height: 420px; }
  .hero-content { padding: 60px 24px; }
- .section { padding: 48px 0; }
+ .section { padding: 56px 0; }
  .service-strip-inner { gap: 20px; flex-direction: column; }
  .gallery-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .ministry-gallery img { height: 150px; }
