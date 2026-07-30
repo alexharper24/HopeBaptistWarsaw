@@ -114,6 +114,16 @@ Timezone is `America/Indiana/Indianapolis` (computed via `Intl`, so it is correc
 
 The schedule is the gate. When `LIVE_CHECK_URL` is set (near the top of the live indicator block), the site also **confirms the actual stream** during those windows via a Cloudflare Worker (see `live-check-worker/`) that queries the YouTube Data API and returns `{live, watchUrl}`, and it deep-links to the exact live video. The Worker holds the API key as a secret so it never ships to the browser. If the Worker is unreachable, or `LIVE_CHECK_URL` is blank, the site falls back to the schedule alone. The Worker is only called during scheduled windows, so there is no API usage the rest of the week.
 
+### Sermons page (sermons.html + main.js)
+Two independent parts:
+
+- **Live section** (`#sermonLive`): hidden entirely unless a service is actually streaming. It re-checks every 60s, so it appears and disappears on its own. Gated by `hopeIsLive()` first, so the API is only called during service windows.
+- **Past Sermons library** (`#sermonGrid`): loads from the Worker's `/videos` endpoint as click-to-play thumbnails (the YouTube iframe loads only on tap, and uses `youtube-nocookie.com`).
+
+`MAX_SERMONS` in `main.js` caps the library at **24** (12 on load, one "Load More" adds 12 more, then the button hides). Older sermons intentionally stay on YouTube, linked below the grid, so the page stays fast on phones as the archive grows. Raise that constant to hold more.
+
+The Worker returns **only watchable videos**: public, embeddable, processed, not a live/upcoming broadcast, and with a non-zero duration. That last check matters, since an ended live stream with no saved recording reports zero duration and would otherwise show up and then say "Live stream offline" when clicked. `CACHE_VERSION` in `worker.js` must be bumped whenever the filtering logic changes, or Cloudflare's edge cache will keep serving the old list.
+
 ### YouTube
 Current channel: `https://youtube.com/@hopebaptistchurch9868`. Used for Sermons links, the "Browse Sermons" hero button, Watch Online (channel) / Watch Live (channel `/live`), and the footer YouTube link. If the channel changes, update `CHANNEL_URL` and `LIVE_URL` in `main.js` and the Sermons/YouTube `href`s in the four HTML files.
 

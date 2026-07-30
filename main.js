@@ -190,6 +190,9 @@ function hopeIsLive() {
   var livePlayer = document.getElementById('sermonLivePlayer');
   var loadMore = document.getElementById('sermonLoadMore');
   var CHANNEL_URL = "https://youtube.com/@hopebaptistchurch9868";
+  // Most sermons the page will hold (12 on load, one "Load More" adds 12 more).
+  // Older sermons stay on the YouTube channel, linked below the grid.
+  var MAX_SERMONS = 24;
   var nextPage = "";
   var loading = false;
   var loadedAny = false;
@@ -271,13 +274,17 @@ function hopeIsLive() {
     var url = HOPE_WORKER_URL + '/videos' + (nextPage ? ('?page=' + encodeURIComponent(nextPage)) : '');
     fetch(url).then(function (r) { return r.json(); }).then(function (d) {
       if (!loadedAny) { grid.innerHTML = ''; loadedAny = true; } // clear the loading placeholder
-      (d.videos || []).forEach(function (v) { grid.appendChild(card(v)); });
+      // Fill up to MAX_SERMONS only. Anything older lives on the YouTube channel,
+      // which keeps this page fast on phones as the archive grows.
+      var room = MAX_SERMONS - grid.querySelectorAll('.slib-card').length;
+      (d.videos || []).slice(0, Math.max(room, 0)).forEach(function (v) { grid.appendChild(card(v)); });
       nextPage = d.nextPage || "";
       loading = false;
+      var atCap = grid.querySelectorAll('.slib-card').length >= MAX_SERMONS;
       if (loadMore) {
         loadMore.disabled = false;
         loadMore.textContent = 'Load More';
-        loadMore.style.display = nextPage ? 'inline-flex' : 'none';
+        loadMore.style.display = (nextPage && !atCap) ? 'inline-flex' : 'none';
       }
       if (!grid.children.length) {
         grid.innerHTML = '<p class="slib-error">No sermons to show yet. <a href="' + CHANNEL_URL +
