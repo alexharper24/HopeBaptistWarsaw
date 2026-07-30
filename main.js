@@ -201,11 +201,6 @@ function hopeIsLive() {
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
-  function fmtDate(iso) {
-    try {
-      return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    } catch (e) { return ""; }
-  }
   // Privacy-enhanced embed (youtube-nocookie).
   function playerHtml(id, title, autoplay) {
     return '<div class="slib-player"><iframe src="https://www.youtube-nocookie.com/embed/' +
@@ -237,8 +232,9 @@ function hopeIsLive() {
       '<button class="slib-thumb" type="button" aria-label="Play ' + esc(v.title) + '">' +
       '<img loading="lazy" src="' + esc(v.thumb) + '" alt="' + esc(v.title) + '">' +
       '<span class="slib-play" aria-hidden="true"></span></button>' +
-      '<div class="slib-meta"><p class="slib-title">' + esc(v.title) + '</p>' +
-      '<p class="slib-date">' + esc(fmtDate(v.publishedAt)) + '</p></div>';
+      // The sermon title already carries the service date, so the YouTube
+      // upload date is deliberately not shown (they differ by a day or more).
+      '<div class="slib-meta"><p class="slib-title">' + esc(v.title) + '</p></div>';
     wirePlay(el.querySelector('.slib-thumb'), v.id, v.title);
     return el;
   }
