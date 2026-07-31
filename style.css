@@ -739,3 +739,21 @@ a { text-decoration: none; color: inherit; }
   .titus-section { background-color: #f6eeea !important; }
   .min-card, .teaser-link { background-color: #ffffff !important; }
 }
+
+/* --------------------------------------------------------------------------
+   Touch devices: neutralise hover lifts.
+   iOS fires :hover on the first tap, so a hover transform stays applied and the
+   tap does not reach the link. Colour-only hover states are left alone; they are
+   harmless without a pointer.
+   -------------------------------------------------------------------------- */
+@media (hover: none) {
+  .btn-primary:hover { transform: none; }
+  .sermon-play-icon:hover { transform: none; }
+  .event-item:hover { transform: none; }
+  .gallery-item:hover img { transform: none; }
+  .belief-section:hover { transform: none; }
+  .slib-card:hover .slib-thumb { transform: none; }
+  .slib-thumb:hover .slib-play { transform: none; }
+  .min-card:hover { transform: none; }
+  .teaser-link:hover { transform: none; }
+}
