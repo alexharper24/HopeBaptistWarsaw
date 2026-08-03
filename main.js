@@ -133,8 +133,8 @@ function hopeIsLive() {
 // "Watch Live" link. When HOPE_WORKER_URL is set, the actual stream is
 // confirmed and the link deep-links to the exact live video.
 (function () {
-  var CHANNEL_URL = "https://youtube.com/@hopebaptistchurch9868";
-  var LIVE_URL = "https://youtube.com/@hopebaptistchurch9868/live";
+  var CHANNEL_URL = "https://www.youtube.com/@hopebaptistchurchwarsaw";
+  var LIVE_URL = "https://www.youtube.com/@hopebaptistchurchwarsaw/streams";
   var btns = document.querySelectorAll('.watch-online');
   if (!btns.length) return;
   btns.forEach(function (a) { a.dataset.defaultHtml = a.innerHTML; });
@@ -189,7 +189,7 @@ function hopeIsLive() {
   var liveSection = document.getElementById('sermonLive');
   var livePlayer = document.getElementById('sermonLivePlayer');
   var loadMore = document.getElementById('sermonLoadMore');
-  var CHANNEL_URL = "https://youtube.com/@hopebaptistchurch9868";
+  var CHANNEL_URL = "https://www.youtube.com/@hopebaptistchurchwarsaw";
   // Most sermons the page will hold (12 on load, one "Load More" adds 12 more).
   // Older sermons stay on the YouTube channel, linked below the grid.
   var MAX_SERMONS = 24;

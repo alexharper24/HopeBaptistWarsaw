@@ -42,10 +42,10 @@ silently falls back to the schedule based behavior. Nothing breaks.
    - Edit the key -> API restrictions -> restrict to **YouTube Data API v3**.
 
 2. The channel ID is already filled in `worker.js`
-   (`UCvbDv_cxJDA7OGYsRVSTBRg` = youtube.com/@hopebaptistchurch9868).
+   (`UCvbDv_cxJDA7OGYsRVSTBRg` = youtube.com/@hopebaptistchurchwarsaw).
    To confirm or change it:
    ```
-   https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=hopebaptistchurch9868&key=YOUR_KEY
+   https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=hopebaptistchurchwarsaw&key=YOUR_KEY
    ```
 
 ## Deploy

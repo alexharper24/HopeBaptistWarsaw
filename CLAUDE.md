@@ -125,7 +125,7 @@ Two independent parts:
 The Worker returns **only watchable videos**: public, embeddable, processed, not a live/upcoming broadcast, and with a non-zero duration. That last check matters, since an ended live stream with no saved recording reports zero duration and would otherwise show up and then say "Live stream offline" when clicked. `CACHE_VERSION` in `worker.js` must be bumped whenever the filtering logic changes, or Cloudflare's edge cache will keep serving the old list.
 
 ### YouTube
-Current channel: `https://youtube.com/@hopebaptistchurch9868`. Used for Sermons links, the "Browse Sermons" hero button, Watch Online (channel) / Watch Live (channel `/live`), and the footer YouTube link. If the channel changes, update `CHANNEL_URL` and `LIVE_URL` in `main.js` and the Sermons/YouTube `href`s in the four HTML files.
+Current channel: `https://www.youtube.com/@hopebaptistchurchwarsaw`. Used for Sermons links, the "Browse Sermons" hero button, Watch Online (channel) / Watch Live (channel `/streams`), and the footer YouTube link. The handle changed from `@hopebaptistchurch9868` to `@hopebaptistchurchwarsaw`; if it changes again, update `CHANNEL_URL` and `LIVE_URL` in `main.js` plus the YouTube `href`s in every HTML page and the `sameAs` entry in the JSON-LD on `index.html`. The Worker is unaffected by handle changes because it keys off the channel ID (`UCvbDv_cxJDA7OGYsRVSTBRg`), which stays the same.
 
 ### Coming Soon modal
 `#comingSoonModal` markup is still in each page and `openComingSoon()`/`closeComingSoon()` remain in `main.js`, but nothing currently triggers the modal (Sermons and Watch now link to YouTube). It is kept as a ready-made pattern for future "not yet live" features. It closes on backdrop click and on its buttons.
@@ -142,7 +142,7 @@ Each page has a unique `<title>`, meta description, canonical URL, and Open Grap
 - Services: Sunday School 10:00 AM, Morning 11:00 AM, Sunday Evening 5:00 PM (1:00 PM first Sunday), Wednesday 6:30 PM.
 - Regular events: Men's Morning Bible Study (Thu 6:45 AM), Saturday Men's Prayer (Sat 7:00 PM), Town Outreach (3rd Friday, summer only), Symphony of Prayer (1st Saturday 9:00 AM).
 - Facebook: https://www.facebook.com/profile.php?id=61586909768207
-- YouTube: https://youtube.com/@hopebaptistchurch9868
+- YouTube: https://www.youtube.com/@hopebaptistchurchwarsaw
 
 ## Common tasks
 

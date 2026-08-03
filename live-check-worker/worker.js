@@ -10,7 +10,7 @@
 // Set the secret with: npx wrangler secret put YT_API_KEY
 // See README.md in this folder for full setup and deploy steps.
 
-const CHANNEL_ID = "UCvbDv_cxJDA7OGYsRVSTBRg"; // youtube.com/@hopebaptistchurch9868
+const CHANNEL_ID = "UCvbDv_cxJDA7OGYsRVSTBRg"; // youtube.com/@hopebaptistchurchwarsaw
 const UPLOADS_PLAYLIST = "UUvbDv_cxJDA7OGYsRVSTBRg"; // channel uploads playlist = channel id with UC -> UU
 const ALLOW_ORIGIN = "https://hopebaptistwarsaw.org";
 const CACHE_VERSION = "v3";        // bump to invalidate edge-cached responses after a logic change
