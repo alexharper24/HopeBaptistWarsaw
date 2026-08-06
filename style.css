@@ -146,7 +146,13 @@ a { text-decoration: none; color: inherit; }
 .section-label {
  display: inline-block; font-size: 0.75rem; font-weight: 600;
  letter-spacing: 0.12em; text-transform: uppercase;
- color: var(--gold); margin-bottom: 8px;
+ /* Deliberately NOT var(--gold). Brand gold #c9a84c is 2.29:1 on white, 2.15:1
+    on cream and 2.00:1 on the Titus pink, all far under the 4.5:1 WCAG AA
+    minimum for 12px text. This darkened gold clears all THREE grounds
+    (5.24 / 4.94 / 4.58). Picking a value for only white and cream left the pink
+    section at 4.25:1, still failing. The brand gold is unchanged everywhere it
+    already passes: buttons, rules, icons. */
+ color: #7f6a30; margin-bottom: 8px;
 }
 
 /* ─── WELCOME / MISSION ─── */
@@ -756,4 +762,16 @@ a { text-decoration: none; color: inherit; }
   .slib-thumb:hover .slib-play { transform: none; }
   .min-card:hover { transform: none; }
   .teaser-link:hover { transform: none; }
+}
+
+
+/* --------------------------------------------------------------------------
+   Footer link tap targets (added 2026-08-06 after a rendered audit).
+   Footer links measured 17-36px tall against the 44px minimum that both Apple
+   and Google publish, so a fingertip overlapped the neighbouring link. Padding
+   only: the text size is unchanged, and this is scoped to phones so desktop
+   footer density stays exactly as it was.
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  footer .footer-col a, footer .footer-brand a { padding-top: 11px; padding-bottom: 11px; }
 }
