@@ -25,6 +25,11 @@ html, body {
  --navy-light: #2a4270;
  --gold: #c9a84c;
  --gold-light: #dfc578;
+ /* Accessible gold for TEXT on light grounds. --gold itself is 2.29:1 on white,
+    2.15:1 on cream and 2.00:1 on the Titus pink, all under the 4.5:1 WCAG AA
+    minimum. This clears all three (5.24 / 4.94 / 4.58). Use --gold for fills,
+    rules, icons and anything on navy; use --gold-ink for small text on light. */
+ --gold-ink: #7f6a30;
  --cream: #faf8f4;
  --warm-gray: #f2efea;
  --text: #2d2d2d;
@@ -146,13 +151,8 @@ a { text-decoration: none; color: inherit; }
 .section-label {
  display: inline-block; font-size: 0.75rem; font-weight: 600;
  letter-spacing: 0.12em; text-transform: uppercase;
- /* Deliberately NOT var(--gold). Brand gold #c9a84c is 2.29:1 on white, 2.15:1
-    on cream and 2.00:1 on the Titus pink, all far under the 4.5:1 WCAG AA
-    minimum for 12px text. This darkened gold clears all THREE grounds
-    (5.24 / 4.94 / 4.58). Picking a value for only white and cream left the pink
-    section at 4.25:1, still failing. The brand gold is unchanged everywhere it
-    already passes: buttons, rules, icons. */
- color: #7f6a30; margin-bottom: 8px;
+ /* --gold-ink, not --gold: see the token definition at the top for the ratios. */
+ color: var(--gold-ink); margin-bottom: 8px;
 }
 
 /* ─── WELCOME / MISSION ─── */
@@ -184,7 +184,7 @@ a { text-decoration: none; color: inherit; }
 .sermon-play-icon:hover { background: rgba(255,255,255,0.25); transform: scale(1.08); }
 .sermon-play-icon svg { width: 28px; height: 28px; color: var(--white); margin-left: 4px; }
 .sermon-card-content { padding: 40px; display: flex; flex-direction: column; justify-content: center; }
-.sermon-series { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 8px; }
+.sermon-series { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-ink); margin-bottom: 8px; }
 .sermon-card-content h3 { font-size: 1.5rem; color: var(--navy); margin-bottom: 10px; }
 .sermon-card-content p { color: var(--text-light); margin-bottom: 20px; font-size: 0.95rem; }
 
@@ -217,7 +217,7 @@ a { text-decoration: none; color: inherit; }
  box-shadow: var(--shadow-lg); object-fit: cover;
 }
 .pastor-text h2 { font-size: 1.7rem; color: var(--navy); margin-bottom: 6px; }
-.pastor-role { font-size: 0.9rem; font-weight: 500; color: var(--gold); margin-bottom: 16px; }
+.pastor-role { font-size: 0.9rem; font-weight: 500; color: var(--gold-ink); margin-bottom: 16px; }
 .pastor-text p { color: var(--text-light); font-size: 1rem; margin-bottom: 12px; }
 
 /* ─── VISIT / CONTACT ─── */
@@ -253,7 +253,7 @@ a { text-decoration: none; color: inherit; }
 .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
 .footer-brand img { height: 44px; width: 44px; border-radius: 50%; margin-bottom: 12px; }
 .footer-brand p { font-size: 0.9rem; line-height: 1.6; max-width: 300px; }
-.footer-col h4 { font-family: 'Lora', serif; font-weight: 600; color: var(--white); font-size: 1rem; margin-bottom: 14px; }
+.footer-col h3, .footer-col h4 { font-family: 'Lora', serif; font-weight: 600; color: var(--white); font-size: 1rem; margin-bottom: 14px; }
 .footer-col a { display: block; font-size: 0.9rem; color: rgba(255,255,255,0.65); margin-bottom: 8px; transition: color 0.2s; }
 .footer-col a:hover { color: var(--white); }
 .footer-bottom {
@@ -702,9 +702,9 @@ a { text-decoration: none; color: inherit; }
 .min-card-body p { color: var(--text-light); font-size: 0.98rem; line-height: 1.7; margin-bottom: 18px; flex: 1; }
 .min-card-link { color: var(--navy); font-weight: 600; font-size: 0.95rem; }
 .min-card-link::after { content: ' \2192'; }
-.min-card:hover .min-card-link { color: var(--gold); }
+.min-card:hover .min-card-link { color: var(--gold-ink); }
 .min-back { display: inline-block; color: var(--navy); font-weight: 600; font-size: 0.9rem; margin-bottom: 20px; }
-.min-back:hover { color: var(--gold); }
+.min-back:hover { color: var(--gold-ink); }
 .min-launch { display: inline-block; background: var(--gold); color: var(--navy-dark); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 5px 12px; border-radius: 20px; }
 
 /* Titus Women detail layout (ministries-women.html) */
