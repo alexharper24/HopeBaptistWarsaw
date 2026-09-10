@@ -27,6 +27,7 @@ sermons.html            Sermons (live section + past-sermon library, driven by t
 ministries.html         Ministries hub (landing page: one card per ministry, links to detail pages)
 ministries-scripture.html  Scripture Publishing Ministry (detail page)
 ministries-women.html   Titus Women ministry (detail page; launching Oct 2026)
+connect.html            Connection Card (online version of the paper card; Formspree form)
 style.css               All styles for every page
 main.js                 All shared behavior (nav, scroll, scripture expand, live indicator, sermons page, modal)
 img/                    All photos + logo
@@ -40,7 +41,9 @@ README.md               Human-facing setup/deploy notes
 
 Every page shares the same header, mobile nav, footer, and Coming Soon modal markup. If you change one of those, change it in **all pages** to keep them in sync. **Ministries** in the nav points to the `ministries.html` hub; each ministry has its own `ministries-*.html` detail page, and new ministries are added as a card on the hub plus a detail page.
 
-**Information architecture.** Nav is six items: Our Church, The Gospel, What We Believe, Sermons, Ministries, Visit. Five are real pages; **Visit is deliberately an anchor to `index.html#visit`**, because the church wants service times and visit details on the homepage where visitors see them without a click. Do not split those back onto their own page without asking.
+**Information architecture.** Nav is six items: Our Church, The Gospel, What We Believe, Sermons, Ministries, Connection Card. All six are real pages.
+
+**Visit was removed from the nav on 2026-09-09 at the church's request**, and Connection Card took its place. Plan Your Visit still lives on the homepage at `index.html#visit` and is still reached from the hero button, the footer Quick Links, and any older external link. Do not split those details onto their own page without asking, and do not restore Visit to the nav without asking either.
 
 - `our-church.html` owns the About/mission copy, the pastor bio, and the Life at Hope gallery.
 - `index.html` owns Plan Your Visit (what to expect, contact, location) and Services & Events, and carries `id="visit"` / `id="events"` for the nav and for older external links. `id="about"` is kept for the same reason.
@@ -126,6 +129,33 @@ The Worker returns **only watchable videos**: public, embeddable, processed, not
 
 ### YouTube
 Current channel: `https://www.youtube.com/@hopebaptistchurchwarsaw`. Used for Sermons links, the "Browse Sermons" hero button, Watch Online (channel) / Watch Live (channel `/streams`), and the footer YouTube link. The handle changed from `@hopebaptistchurch9868` to `@hopebaptistchurchwarsaw`; if it changes again, update `CHANNEL_URL` and `LIVE_URL` in `main.js` plus the YouTube `href`s in every HTML page and the `sameAs` entry in the JSON-LD on `index.html`. The Worker is unaffected by handle changes because it keys off the channel ID (`UCvbDv_cxJDA7OGYsRVSTBRg`), which stays the same.
+
+### Connection card (connect.html)
+The online version of the church's printed connection card, built so a QR code on the
+printed card can point at it. Plain `POST` to Formspree, no JavaScript involved, so it
+keeps working if `main.js` ever fails. Field labels and the six "Do any of these apply
+to you?" checkboxes are **verbatim from the paper card** and should not be reworded
+without the church saying so.
+
+Only `name` is required. Everything else is optional, because the card includes "I am
+just visiting and would prefer not to be contacted by anyone" and it would be wrong to
+force contact details out of someone who ticks it. The address fields exist so the
+church can drop a gift card off in person, and the copy says so.
+
+Spam control is the `_gotcha` honeypot, which Formspree discards on. It legitimately
+sits outside the viewport; that is not a layout bug.
+
+**While the ID is still `REPLACE_THIS_FORMSPREE_ID`, a yellow `.form-todo` notice sits
+above the form.** Delete that block in the same edit that pastes the real ID. Never let
+this page ship looking functional while it silently drops submissions.
+
+The page sits in the main nav where Visit used to be (see Information architecture), and
+is also reached by QR code, the footer Quick Links, and a button in Plan Your Visit on
+the homepage.
+
+**Faith Baptist School is deliberately not one of the checkboxes.** It is on the printed
+card, but the church asked for it to be left off the online version. Do not add it back
+without them asking.
 
 ### Coming Soon modal
 `#comingSoonModal` markup is still in each page and `openComingSoon()`/`closeComingSoon()` remain in `main.js`, but nothing currently triggers the modal (Sermons and Watch now link to YouTube). It is kept as a ready-made pattern for future "not yet live" features. It closes on backdrop click and on its buttons.

@@ -12,9 +12,18 @@ html, body {
   }
   .section { background-color: #ffffff !important; }
   .section-alt { background-color: #faf8f4 !important; }
-  .belief-section, .gospel-section, .visit-box, .event-item {
+  .belief-section, .gospel-section, .visit-box, .event-item, .form-card {
     background-color: #ffffff !important;
   }
+  /* Form controls invert hardest of all on iOS. Pin them explicitly. */
+  .form-group input, .form-group textarea, .form-group select {
+    background-color: #ffffff !important;
+    color: #2d2d2d !important;
+    border-color: #d4d4d4 !important;
+  }
+  .check-item input { accent-color: #1e3054 !important; }
+  .form-todo { background-color: #fdf6e3 !important; }
+  .form-aside { background-color: #faf8f4 !important; }
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -77,7 +86,7 @@ a { text-decoration: none; color: inherit; }
 .header-logo-text span { display: block; font-size: 0.7rem; font-family: 'Source Sans 3', sans-serif; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light); }
 
 .main-nav { display: flex; align-items: center; gap: 28px; }
-.main-nav a { font-size: 0.9rem; font-weight: 500; color: var(--text-light); transition: color 0.2s; }
+.main-nav a { font-size: 0.9rem; font-weight: 500; color: var(--text-light); transition: color 0.2s; white-space: nowrap; }
 .main-nav a:hover { color: var(--navy); }
 
 .header-ctas { display: flex; gap: 10px; }
@@ -244,6 +253,74 @@ a { text-decoration: none; color: inherit; }
 }
 .form-group textarea { resize: vertical; min-height: 90px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ─── CONNECTION CARD FORM (connect.html) ─── */
+.form-card {
+ background: var(--white); padding: 40px; border-radius: 12px;
+ box-shadow: var(--shadow); margin-bottom: 28px;
+}
+.form-fieldset { border: 0; margin: 0 0 30px; padding: 0; }
+.form-legend {
+ font-family: 'Lora', Georgia, serif; font-size: 1.25rem; font-weight: 600;
+ color: var(--navy); line-height: 1.3; margin-bottom: 6px; padding: 0;
+}
+.form-hint { font-size: 0.9rem; color: var(--text-light); margin-bottom: 14px; }
+.form-legend + .form-group { margin-top: 12px; }
+.form-row-3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; }
+.form-required { color: var(--gold-ink); font-weight: 600; }
+
+.check-list { display: grid; gap: 12px; }
+.check-item {
+ display: flex; align-items: flex-start; gap: 11px;
+ font-size: 0.95rem; color: var(--text); line-height: 1.45;
+ cursor: pointer; padding: 4px 0;
+}
+.check-item input {
+ width: 19px; height: 19px; margin: 1px 0 0; flex-shrink: 0;
+ accent-color: var(--navy); cursor: pointer;
+}
+
+/* Setup guard. Visible while the Formspree ID is still the placeholder, so an
+   unconfigured form can never sit there quietly dropping submissions. */
+.form-todo {
+ background: #fdf6e3; border-left: 4px solid var(--gold);
+ padding: 16px 20px; border-radius: 8px; margin-bottom: 26px;
+ font-size: 0.92rem; line-height: 1.55;
+}
+.form-todo p + p { margin-top: 8px; }
+.form-todo strong { color: var(--navy); }
+.form-todo code {
+ background: rgba(30,48,84,0.09); padding: 1px 6px; border-radius: 4px;
+ font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.88em;
+}
+
+.form-privacy { font-size: 0.88rem; color: var(--text-light); margin-top: 18px; }
+.form-aside {
+ background: var(--cream); border-radius: 12px; padding: 24px 28px;
+ font-size: 0.95rem; color: var(--text-light);
+}
+.form-aside strong { color: var(--navy); }
+.form-aside p + p { margin-top: 6px; }
+.form-aside a { color: var(--navy); font-weight: 600; text-decoration: underline; }
+.form-verse {
+ text-align: center; font-family: 'Lora', Georgia, serif; font-style: italic;
+ color: var(--text-light); font-size: 0.95rem; margin-top: 28px;
+}
+
+/* Label kept for screen readers where the legend already carries the question. */
+.sr-only {
+ position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+ overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media (max-width: 640px) {
+ .form-card { padding: 26px 20px; }
+ .form-row, .form-row-3 { grid-template-columns: 1fr; gap: 0; }
+ .form-legend { font-size: 1.15rem; }
+ .form-aside { padding: 20px 22px; }
+ /* 16px minimum stops iOS Safari zooming the page on field focus. */
+ .form-group input, .form-group textarea, .form-group select { font-size: 16px; }
+}
 
 /* ─── FOOTER ─── */
 .site-footer {
@@ -547,6 +624,21 @@ a { text-decoration: none; color: inherit; }
   object-fit: cover;
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(30,48,84,0.08);
+}
+
+/* ─── HEADER FIT ───
+   Six nav items, one of them long (Connection Card), plus the logo and the Watch
+   Online button, stop fitting on one line below about 980px. Tighten the gap on the
+   way down, then hand over to the hamburger early rather than let the nav wrap onto
+   a second row. This is kept separate from the 900px MOBILE block below, which
+   restyles the whole page and must not move. */
+@media (min-width: 981px) and (max-width: 1120px) {
+ .main-nav { gap: 20px; }
+}
+@media (max-width: 980px) {
+ .main-nav { display: none; }
+ .mobile-toggle { display: block; }
+ .header-ctas { display: none; }
 }
 
 /* ─── MOBILE ─── */

@@ -12,13 +12,35 @@ site updates automatically.
 
 ## Pages
 
-- `index.html` - Home
+- `index.html` - Home (includes Plan Your Visit and Services & Events)
+- `our-church.html` - Our Church
 - `gospel.html` - What is the Gospel?
 - `beliefs.html` - What We Believe (statement of faith)
-- `ministries.html` - Scripture Publishing Ministry
+- `sermons.html` - Sermons
+- `ministries.html` - Ministries hub
+- `ministries-scripture.html` - Scripture Publishing Ministry
+- `ministries-women.html` - Titus Women
+- `connect.html` - Connection Card (online version of the paper card)
 
 Shared across all pages: `style.css` (all styling), `main.js` (all behavior),
 `img/` (all photos and the logo).
+
+## Still pending
+
+- **Connection card form is not live.** `connect.html` posts to
+  `https://formspree.io/f/REPLACE_THIS_FORMSPREE_ID`. Create the Formspree form,
+  paste the real ID into the `action`, and delete the yellow `.form-todo` notice
+  above the form. The first real submission triggers a one time confirmation
+  email to the destination inbox, which somebody has to click before anything
+  else gets delivered. Free tier is 50 submissions per month.
+- **Decide the destination inbox** for connection cards. Set it in the Formspree
+  dashboard, not in this repo.
+- **QR code for the printed card.** Once the form is live, generate a QR pointing
+  at `https://hopebaptistwarsaw.org/connect.html` and drop it into the printed
+  card artwork where the placeholder sits.
+Note: the Faith Baptist School checkbox on the printed card is deliberately left
+off the online form, at the church's request. Connection Card sits in the main
+nav in place of Visit, whose details remain on the homepage. Promote it into the nav if the church wants it there.
 
 ## Preview locally
 
