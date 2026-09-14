@@ -627,15 +627,19 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ─── HEADER FIT ───
-   Six nav items, one of them long (Connection Card), plus the logo and the Watch
-   Online button, stop fitting on one line below about 980px. Tighten the gap on the
-   way down, then hand over to the hamburger early rather than let the nav wrap onto
-   a second row. This is kept separate from the 900px MOBILE block below, which
-   restyles the whole page and must not move. */
-@media (min-width: 981px) and (max-width: 1120px) {
+   Six nav items plus the logo and the Watch Online button stop fitting on one line
+   below about 914px, so the nav used to wrap onto a second row between 901 and 914.
+   Tighten the gap on the way down, then hand over to the hamburger at 920 rather
+   than let it wrap. This is kept separate from the 900px MOBILE block below, which
+   restyles the whole page and must not move.
+
+   The threshold tracks the longest nav label. With Visit it is 920. When the
+   Connection Card page goes back into the nav, raise both numbers to 980 and 1120,
+   which is what they were when that longer label shipped. */
+@media (min-width: 921px) and (max-width: 1000px) {
  .main-nav { gap: 20px; }
 }
-@media (max-width: 980px) {
+@media (max-width: 920px) {
  .main-nav { display: none; }
  .mobile-toggle { display: block; }
  .header-ctas { display: none; }
