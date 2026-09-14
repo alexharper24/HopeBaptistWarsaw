@@ -175,6 +175,38 @@ Plan Your Visit on the homepage.
 card, but the church asked for it to be left off the online version. Do not add it back
 without them asking.
 
+### Footer columns fold on a phone (added 2026-09-14)
+
+At 390px wide the footer measured 980px, more than a screenful of links sitting under
+the address. Below 900px, Quick Links and Connect fold behind their own headings and the
+footer is 436px. Desktop is untouched at 382px.
+
+- **The toggle, its chevron and the panel are built by `main.js`, not written into the
+  eight pages.** The pages are unchanged apart from the `?v=` bumps: the columns already
+  carried `class="footer-col"`. Two reasons to keep it that way. The heading text is
+  written once, so renaming a column cannot leave the phone and the desktop disagreeing.
+  And a footer whose script never loaded keeps plain headings with every link visible,
+  because the elements that do the folding never come into being. Hiding links behind a
+  control that cannot open them is the one failure this pattern must not have. Do not
+  move the toggle markup into the HTML.
+- **The `.footer-brand` block never folds.** The address and Get Directions are what
+  someone scrolls to a church footer for.
+- **Everything after the heading is MOVED into the panel, not cloned.** The live-service
+  code above it has already bound the footer's `.watch-online` link, and cloning would
+  drop that listener. Moving whatever follows the heading also means the same block works
+  on sites that wrap footer links in a `<ul>` rather than listing bare `<a>`, which is how
+  it ports to the other church sites unchanged.
+- **The breakpoint is 900px because that is where `.footer-grid` already collapses to one
+  column.** Not a number picked to look tidy. Verified at the edge: 901px gives three
+  columns with the fold off, 900px gives one column with the fold on.
+- **Closed panels set `visibility: hidden` as well as a zero grid row.** The zero row
+  collapses the height; visibility is what takes the links out of the tab order and out
+  of the way of taps, the way `display:none` used to. With both columns closed the only
+  reachable footer links are Get Directions and the Harper Studio credit.
+- Known and deliberately left alone: Quick Links is an `<h3>` and Connect an `<h4>`. The
+  JS accepts either. Worth normalising one day, but it is a pre-existing inconsistency,
+  not something this change introduced.
+
 ### Coming Soon modal
 `#comingSoonModal` markup is still in each page and `openComingSoon()`/`closeComingSoon()` remain in `main.js`, but nothing currently triggers the modal (Sermons and Watch now link to YouTube). It is kept as a ready-made pattern for future "not yet live" features. It closes on backdrop click and on its buttons.
 

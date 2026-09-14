@@ -339,6 +339,74 @@ a { text-decoration: none; color: inherit; }
  color: rgba(255,255,255,0.45);
 }
 
+/* --------------------------------------------------------------------------
+   Footer columns fold on a phone (2026-09-14).
+   Measured at 390px wide, the footer ran 980px: more than a screen of links
+   below the address. Quick Links and Connect fold behind their own headings,
+   which brings it to about 530px.
+
+   The breakpoint is 900px because that is where .footer-grid already collapses
+   to one column, so the fold is scoped to exactly the widths where the footer
+   is a single stack. It is not a number chosen to look tidy.
+
+   The brand block never folds. The address and Get Directions are what someone
+   scrolls to a church footer for, and they are a few lines rather than a list.
+
+   Everything here is scoped to .footer-accordion-ready, a class main.js adds at
+   run time rather than one written into the eight pages. A footer whose script
+   never loaded therefore renders exactly as it did before: every link visible,
+   every toggle hidden.
+
+   Closed panels set visibility:hidden as well as a zero grid row. The zero row
+   collapses the height; visibility is what actually takes the links out of the
+   tab order and out of the way of taps, the way display:none used to.
+   -------------------------------------------------------------------------- */
+.footer-col-toggle { display: none; }
+
+@media (max-width: 900px) {
+  /* No grid gap and no heading margin: each folded row carries its own top
+     rule, so a gap would leave dead space above every rule and the rows would
+     read as floating bars rather than one list. */
+  .footer-accordion-ready .footer-grid { gap: 0; margin-bottom: 0; }
+  .footer-accordion-ready .footer-brand { margin-bottom: 26px; }
+  .footer-accordion-ready .footer-col h3,
+  .footer-accordion-ready .footer-col h4 { margin-bottom: 0; }
+  .footer-accordion-ready .footer-col-label { display: none; }
+
+  .footer-accordion-ready .footer-col-toggle {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    width: 100%; min-height: 48px; padding: 12px 0;
+    background: none; border: 0; border-top: 1px solid rgba(255,255,255,0.13);
+    color: var(--white); font-family: 'Lora', serif; font-weight: 600;
+    font-size: 1rem; text-align: left; cursor: pointer;
+  }
+  .footer-accordion-ready .footer-col-toggle svg {
+    flex: 0 0 auto; transition: transform 0.24s cubic-bezier(0.4, 0, 0.6, 1);
+  }
+  .footer-accordion-ready .footer-col.open .footer-col-toggle svg { transform: rotate(180deg); }
+
+  .footer-accordion-ready .footer-col-panel {
+    display: grid; grid-template-rows: 0fr;
+    transition: grid-template-rows 0.32s cubic-bezier(0.4, 0, 0.6, 1);
+  }
+  .footer-accordion-ready .footer-col-panel > div {
+    overflow: hidden; min-height: 0;
+    visibility: hidden; transition: visibility 0.32s step-end;
+  }
+  .footer-accordion-ready .footer-col.open .footer-col-panel { grid-template-rows: 1fr; }
+  .footer-accordion-ready .footer-col.open .footer-col-panel > div {
+    visibility: visible; transition: visibility 0s;
+  }
+  /* the last link keeps the breathing room, so a closed panel is a true zero */
+  .footer-accordion-ready .footer-col-panel a:last-child { margin-bottom: 14px; }
+}
+
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) {
+  .footer-accordion-ready .footer-col-panel,
+  .footer-accordion-ready .footer-col-panel > div,
+  .footer-accordion-ready .footer-col-toggle svg { transition: none; }
+}
+
 
 
 /* ─── IDENTITY BANNER ─── */

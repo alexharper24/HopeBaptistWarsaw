@@ -302,3 +302,76 @@ function hopeIsLive() {
   checkLive();
   setInterval(checkLive, 60000); // show/hide the live section automatically
 })();
+
+
+// ===== Footer columns fold on a phone =====
+// The footer measured 980px tall at 390px wide, more than a screenful sitting
+// under the address. Quick Links and Connect now fold behind their own
+// headings below 900px, which is where .footer-grid collapses to one column.
+// The brand block never folds: the address and Get Directions are what someone
+// scrolls to a church footer for.
+//
+// The toggle and the panel are BUILT HERE rather than written into the eight
+// pages, for two reasons. The heading text is then written once, so renaming a
+// column cannot leave the phone and the desktop disagreeing. And a footer whose
+// script never loaded keeps plain headings with every link visible, because the
+// elements that do the folding never come into being; hiding links behind a
+// control that cannot open them is the one failure this pattern must not have.
+//
+// Everything after the heading is MOVED into the panel, not cloned. Two reasons
+// again: the live-service code above has already bound the .watch-online link in
+// this footer and cloning would drop that listener, and moving whatever follows
+// the heading works whether a site lists its links as bare <a> (this site) or
+// wraps them in a <ul> (Layton Chapel), so the same block ports without a branch.
+(function () {
+  var cols = document.querySelectorAll('.footer-col');
+  var foot = document.querySelector('.site-footer');
+  if (!cols.length || !foot) return;
+
+  var CHEVRON = '<svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"' +
+    ' focusable="false"><path d="M2 4.5L6 8.5L10 4.5" fill="none" stroke="currentColor"' +
+    ' stroke-width="1.8" stroke-linecap="square"></path></svg>';
+
+  Array.prototype.forEach.call(cols, function (col) {
+    // h3 on Quick Links, h4 on Connect: accept either rather than assume
+    var heading = col.querySelector('h3, h4');
+    if (!heading) return;
+
+    var label = heading.textContent.trim();
+    if (!label) return;
+    var id = 'footer-' + label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+    var panel = document.createElement('div');
+    panel.className = 'footer-col-panel';
+    panel.id = id;
+    var clip = document.createElement('div');
+    var node = heading.nextSibling;
+    while (node) { var next = node.nextSibling; clip.appendChild(node); node = next; }
+    panel.appendChild(clip);
+    col.appendChild(panel);
+
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'footer-col-toggle';
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-controls', id);
+    button.appendChild(document.createTextNode(label));
+    button.insertAdjacentHTML('beforeend', CHEVRON);
+
+    // the heading keeps a plain label for desktop, where the button is hidden
+    var text = document.createElement('span');
+    text.className = 'footer-col-label';
+    text.textContent = label;
+    heading.textContent = '';
+    heading.appendChild(text);
+    heading.appendChild(button);
+
+    button.addEventListener('click', function () {
+      var open = !col.classList.contains('open');
+      col.classList.toggle('open', open);
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  });
+
+  foot.classList.add('footer-accordion-ready');
+})();
