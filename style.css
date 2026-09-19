@@ -24,6 +24,8 @@ html, body {
   .check-item input { accent-color: #1e3054 !important; }
   .form-todo { background-color: #fdf6e3 !important; }
   .form-aside { background-color: #faf8f4 !important; }
+  /* Meant to stay dark. See gotcha 1: the overrides above use !important. */
+  .belief-group-title { background-color: #1e3054 !important; color: #ffffff !important; }
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -583,36 +585,40 @@ a { text-decoration: none; color: inherit; }
    Four headings over thirteen sections. This is what lets the jump nav be four pills
    instead of thirteen, which is what lets it stay sticky on a phone without eating the
    screen. Adding a fifth group means adding a fifth pill, so keep the labels short. */
-/* The group title has to out-rank the doctrine headings inside the cards below it,
-   which are 1.45rem Lora navy. The first attempt styled it as a 0.8rem uppercase
-   eyebrow like .section-label, which inverted the hierarchy: the h2 read as decoration
-   and the thirteen h3s still dominated the page, so the grouping was invisible. Keep
-   this comfortably larger than .belief-section h3 and smaller than .section-header h2
-   (2rem), and keep the breathing room above it, which is what actually signals a new
-   group on a long scroll. */
+/* The group title is a filled navy band, not a larger version of the doctrine heading.
+   Two earlier attempts failed because both headings spoke the same vocabulary: navy
+   Lora 600 with a gold rule. Size alone could never separate them, because each
+   doctrine heading also carries a 42px filled navy icon square, so at 1.28x the group
+   title still lost on visual weight. A solid band is a different kind of object, so the
+   page reads as four chapters rather than thirteen cards with bigger text every so
+   often. Keep it categorically different from .belief-heading, not merely bigger. */
 .belief-group { margin-bottom: 0; }
-.belief-group + .belief-group { margin-top: 64px; }
+.belief-group + .belief-group { margin-top: 56px; }
 
 .belief-group-title {
- font-size: 1.85rem; font-weight: 600;
- color: var(--navy);
+ background: var(--navy);
+ color: var(--white);
+ font-size: 1.3rem; font-weight: 600;
  text-align: center;
- margin: 0 0 30px;
+ padding: 18px 28px;
+ border-radius: 10px;
+ margin: 0 0 26px;
+ box-shadow: var(--shadow);
 }
-/* Decorative rule, so --gold not --gold-ink: see the token definition at the top. */
+/* Gold on navy, so --gold not --gold-ink: this is a fill, and the token comment at the
+   top says --gold is for fills and for anything sitting on navy. */
 .belief-group-title::after {
  content: ''; display: block;
- width: 60px; height: 3px; border-radius: 2px;
+ width: 48px; height: 3px; border-radius: 2px;
  background: var(--gold);
- margin: 14px auto 0;
+ margin: 12px auto 0;
 }
 @media (max-width: 640px) {
- /* Both ends move together. The group title must stay clearly above the doctrine
-    heading at every width, and 1.45rem is oversized inside a 303px-wide card anyway,
-    so the h3 comes down rather than the h2 being pushed up to compete with it. */
- .belief-group-title { font-size: 1.5rem; margin-bottom: 24px; }
+ /* The band carries the hierarchy on its own here, so the doctrine heading only needs
+    to come down for the 303px-wide card it sits in, not to get out of the way. */
+ .belief-group-title { font-size: 1.15rem; padding: 15px 20px; margin-bottom: 22px; }
  .belief-section h3 { font-size: 1.2rem; }
- .belief-group + .belief-group { margin-top: 48px; }
+ .belief-group + .belief-group { margin-top: 44px; }
 }
 
 .belief-section p {
