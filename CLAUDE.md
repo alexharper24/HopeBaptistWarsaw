@@ -22,7 +22,7 @@ The audience is ordinary church visitors and people searching for a church local
 index.html              Home (hero, service strip, welcome teaser, 2026 focus, Titus Women highlight, Plan Your Visit + contact, Services & Events)
 our-church.html         Our Church (welcome/mission, meet our pastor, Life at Hope gallery, ministries teaser)
 gospel.html             "What is the Gospel?" (God, Problem/Sin, Penalty, Payment, Decision)
-beliefs.html            "What We Believe" (12-point statement of faith)
+beliefs.html            "What We Believe" (13-point statement of faith)
 sermons.html            Sermons (live section + past-sermon library, driven by the Cloudflare Worker)
 ministries.html         Ministries hub (landing page: one card per ministry, links to detail pages)
 ministries-scripture.html  Scripture Publishing Ministry (detail page)

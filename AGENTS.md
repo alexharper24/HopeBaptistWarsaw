@@ -21,7 +21,7 @@ The audience is ordinary church visitors and people searching for a church local
 ```
 index.html        Home (hero, welcome/mission, 2026 focus, services+events, gallery, pastor, visit/contact)
 gospel.html       "What is the Gospel?" (God, Problem/Sin, Penalty, Payment, Decision)
-beliefs.html      "What We Believe" (12-point statement of faith)
+beliefs.html      "What We Believe" (13-point statement of faith)
 ministries.html   Scripture Publishing Ministry
 style.css         All styles for every page
 main.js           All shared behavior (nav, scroll, scripture expand, live indicator, modal)
