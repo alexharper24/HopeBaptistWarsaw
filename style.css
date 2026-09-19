@@ -500,7 +500,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 
-.belief-section[id] {
+.belief-section[id], .belief-group[id] {
  scroll-margin-top: 160px;
 }
 @media (max-width: 900px) {
@@ -514,7 +514,7 @@ a { text-decoration: none; color: inherit; }
     is not inside a belief section, so it matched nothing and never applied. Keep it
     at the top level of the media query. */
  .beliefs-nav { position: relative !important; top: auto !important; }
- .belief-section[id] { scroll-margin-top: 80px; }
+ .belief-section[id], .belief-group[id] { scroll-margin-top: 80px; }
 }
 /* ─── BELIEFS PAGE ─── */
 .beliefs-nav {
@@ -573,8 +573,25 @@ a { text-decoration: none; color: inherit; }
  width: 22px; height: 22px;
 }
 
-.belief-section h2 {
+/* h3, not h2: the four .belief-group-title headings above are the h2s, so the outline
+   runs h1 page > h2 group > h3 doctrine. Sizing is unchanged from when these were h2s. */
+.belief-section h3 {
  font-size: 1.45rem; color: var(--navy); margin: 0;
+}
+
+/* ─── BELIEF GROUPS ───
+   Four headings over thirteen sections. This is what lets the jump nav be four pills
+   instead of thirteen, which is what lets it stay sticky on a phone without eating the
+   screen. Adding a fifth group means adding a fifth pill, so keep the labels short. */
+.belief-group { margin-bottom: 46px; }
+.belief-group:last-child { margin-bottom: 0; }
+.belief-group-title {
+ font-size: 0.8rem; font-weight: 600;
+ letter-spacing: 0.12em; text-transform: uppercase;
+ /* --gold-ink, not --gold: see the token definition at the top for the ratios. */
+ color: var(--gold-ink);
+ margin: 0 0 16px; padding-bottom: 10px;
+ border-bottom: 1px solid rgba(30,48,84,0.12);
 }
 
 .belief-section p {

@@ -22,7 +22,7 @@ The audience is ordinary church visitors and people searching for a church local
 index.html              Home (hero, service strip, welcome teaser, 2026 focus, Titus Women highlight, Plan Your Visit + contact, Services & Events)
 our-church.html         Our Church (welcome/mission, meet our pastor, Life at Hope gallery, ministries teaser)
 gospel.html             "What is the Gospel?" (God, Problem/Sin, Penalty, Payment, Decision)
-beliefs.html            "What We Believe" (13-point statement of faith)
+beliefs.html            "What We Believe" (13 points in 4 groups; see Belief groups)
 sermons.html            Sermons (live section + past-sermon library, driven by the Cloudflare Worker)
 ministries.html         Ministries hub (landing page: one card per ministry, links to detail pages)
 ministries-scripture.html  Scripture Publishing Ministry (detail page)
@@ -128,6 +128,31 @@ The Worker returns **only watchable videos**: public, embeddable, processed, not
 
 ### YouTube
 Current channel: `https://www.youtube.com/@hopebaptistchurchwarsaw`. Used for Sermons links, the "Browse Sermons" hero button, Watch Online (channel) / Watch Live (channel `/streams`), and the footer YouTube link. The handle changed from `@hopebaptistchurch9868` to `@hopebaptistchurchwarsaw`; if it changes again, update `CHANNEL_URL` and `LIVE_URL` in `main.js` plus the YouTube `href`s in every HTML page and the `sameAs` entry in the JSON-LD on `index.html`. The Worker is unaffected by handle changes because it keys off the channel ID (`UCvbDv_cxJDA7OGYsRVSTBRg`), which stays the same.
+
+### Belief groups (beliefs.html)
+The thirteen doctrines sit inside four `<section class="belief-group" id="...">` wrappers,
+each led by an `<h2 class="belief-group-title">`. Heading outline is **h1 page, h2 group,
+h3 doctrine**, so the per-doctrine headings are `<h3>` and `.belief-section h3` carries
+their styling. Do not put an `<h2>` inside a belief section.
+
+| Group id | Title | Doctrines |
+|---|---|---|
+| `god-and-word` | God and His Word | scripture, god, christ, spirit |
+| `creation-and-salvation` | Creation, Man, and Salvation | creation, sin, salvation, security |
+| `church-and-living` | The Church and Christian Living | church, baptism, separation |
+| `last-things` | Last Things | israel, return |
+
+**The jump nav points at the four group ids, not the thirteen doctrine ids.** That is the
+whole point of the grouping: thirteen pills wrapped to six rows at 375px. The individual
+`#scripture`, `#israel` and so on still exist and still work as deep links, and both
+`.belief-section[id]` and `.belief-group[id]` carry `scroll-margin-top`.
+
+**Creation moved** from last on the page to the head of the second group on 2026-09-19.
+It had been appended after the original twelve and sat oddly after The Second Coming.
+
+Adding a fifth group means a fifth pill, which is what pushes the phone nav to a third
+row, so prefer adding a doctrine to an existing group. If the labels ever need to grow,
+make the nav a single horizontal scroll strip on mobile rather than letting it wrap.
 
 ### Connection card (connect.html) — PULLED, not currently on the site
 **Taken down on 2026-09-14** and held until Stephen creates the Formspree account.
