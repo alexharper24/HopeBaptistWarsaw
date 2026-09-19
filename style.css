@@ -504,11 +504,17 @@ a { text-decoration: none; color: inherit; }
  scroll-margin-top: 160px;
 }
 @media (max-width: 900px) {
- .belief-section[id] {
- scroll-margin-top: 80px;
- 
-  .beliefs-nav { position: relative !important; top: auto !important; }
-}
+ /* The jump nav un-sticks on phones. Thirteen pills wrap to six rows at 375px,
+    which with the sticky header ate 41% of the screen before any doctrine was
+    visible. It stays put at the top of the page instead, and `scroll-margin-top`
+    below is 80px to match the header alone, not the header plus this nav.
+
+    This rule used to sit nested INSIDE the `.belief-section[id]` block, where the
+    browser parsed it as `& .beliefs-nav`, a descendant of a belief section. The nav
+    is not inside a belief section, so it matched nothing and never applied. Keep it
+    at the top level of the media query. */
+ .beliefs-nav { position: relative !important; top: auto !important; }
+ .belief-section[id] { scroll-margin-top: 80px; }
 }
 /* ─── BELIEFS PAGE ─── */
 .beliefs-nav {
