@@ -583,15 +583,36 @@ a { text-decoration: none; color: inherit; }
    Four headings over thirteen sections. This is what lets the jump nav be four pills
    instead of thirteen, which is what lets it stay sticky on a phone without eating the
    screen. Adding a fifth group means adding a fifth pill, so keep the labels short. */
-.belief-group { margin-bottom: 46px; }
-.belief-group:last-child { margin-bottom: 0; }
+/* The group title has to out-rank the doctrine headings inside the cards below it,
+   which are 1.45rem Lora navy. The first attempt styled it as a 0.8rem uppercase
+   eyebrow like .section-label, which inverted the hierarchy: the h2 read as decoration
+   and the thirteen h3s still dominated the page, so the grouping was invisible. Keep
+   this comfortably larger than .belief-section h3 and smaller than .section-header h2
+   (2rem), and keep the breathing room above it, which is what actually signals a new
+   group on a long scroll. */
+.belief-group { margin-bottom: 0; }
+.belief-group + .belief-group { margin-top: 64px; }
+
 .belief-group-title {
- font-size: 0.8rem; font-weight: 600;
- letter-spacing: 0.12em; text-transform: uppercase;
- /* --gold-ink, not --gold: see the token definition at the top for the ratios. */
- color: var(--gold-ink);
- margin: 0 0 16px; padding-bottom: 10px;
- border-bottom: 1px solid rgba(30,48,84,0.12);
+ font-size: 1.85rem; font-weight: 600;
+ color: var(--navy);
+ text-align: center;
+ margin: 0 0 30px;
+}
+/* Decorative rule, so --gold not --gold-ink: see the token definition at the top. */
+.belief-group-title::after {
+ content: ''; display: block;
+ width: 60px; height: 3px; border-radius: 2px;
+ background: var(--gold);
+ margin: 14px auto 0;
+}
+@media (max-width: 640px) {
+ /* Both ends move together. The group title must stay clearly above the doctrine
+    heading at every width, and 1.45rem is oversized inside a 303px-wide card anyway,
+    so the h3 comes down rather than the h2 being pushed up to compete with it. */
+ .belief-group-title { font-size: 1.5rem; margin-bottom: 24px; }
+ .belief-section h3 { font-size: 1.2rem; }
+ .belief-group + .belief-group { margin-top: 48px; }
 }
 
 .belief-section p {
