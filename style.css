@@ -868,10 +868,15 @@ a { text-decoration: none; color: inherit; }
 .slib-heading-live::after { background: #c0392b; }
 
 /* Live section (only shown while a service is streaming) */
-.slib-live-section .slib-player { max-width: 860px; margin: 0 auto; box-shadow: var(--shadow-lg); }
+/* Fills the .slib-wrap content column, the same width the sermon grid below uses,
+   so the live player and the card rows share one edge. It used to be capped at
+   860px, which made the live section visibly narrower than the rest of the page. */
+.slib-live-section .slib-player { max-width: none; margin: 0 auto; box-shadow: var(--shadow-lg); }
 
 /* Library grid */
-.slib-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 300px)); justify-content: center; gap: 34px 28px; }
+/* 1fr tracks, not a fixed 300px, so the row spans the full content column and lines
+   up with the live player above it. Fixed tracks left a 36px gutter either side. */
+.slib-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); justify-content: center; gap: 34px 28px; }
 .slib-loading { grid-column: 1 / -1; color: var(--text-light); padding: 40px 0; text-align: center; }
 .slib-error { grid-column: 1 / -1; text-align: center; color: var(--text-light); padding: 24px; }
 .slib-error a { color: var(--navy); text-decoration: underline; }
@@ -898,10 +903,10 @@ a { text-decoration: none; color: inherit; }
   .slib-wrap { padding: 44px 20px 60px; }
   .slib-section { margin-bottom: 48px; }
   .slib-heading { font-size: 1.6rem; }
-  .slib-grid { grid-template-columns: repeat(2, minmax(0, 320px)); gap: 26px 20px; }
+  .slib-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 20px; }
 }
 @media (max-width: 560px) {
-  .slib-grid { grid-template-columns: minmax(0, 360px); gap: 24px; }
+  .slib-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
 }
 
 /* ── Ministries hub (ministries.html) ── */
