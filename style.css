@@ -852,7 +852,10 @@ a { text-decoration: none; color: inherit; }
 /* ── Sermons page (sermons.html) ── namespaced slib- to avoid clashing with
    the homepage .sermon-card. Cards are transparent on the white body, so no
    dark-mode override is needed. */
-.slib-wrap { max-width: 1040px; margin: 0 auto; padding: 64px 24px 80px; }
+/* 1120px to match .container and .header-inner. At 1040 the sermon content sat 40px
+   inset per side from the logo and the Watch Live button, so the page looked narrower
+   than the header framing it. Keep these three in step. */
+.slib-wrap { max-width: 1120px; margin: 0 auto; padding: 64px 24px 80px; }
 .slib-section { margin-bottom: 64px; }
 .slib-section:last-child { margin-bottom: 0; }
 
@@ -900,7 +903,9 @@ a { text-decoration: none; color: inherit; }
 .slib-yt-link { color: var(--navy); font-weight: 600; text-decoration: underline; font-size: 0.95rem; }
 
 @media (max-width: 900px) {
-  .slib-wrap { padding: 44px 20px 60px; }
+  /* 24px, not 20px: .header-inner keeps 24px at every width, and a 4px difference
+     left the sermon content a hair outside the header edges on phones. */
+  .slib-wrap { padding: 44px 24px 60px; }
   .slib-section { margin-bottom: 48px; }
   .slib-heading { font-size: 1.6rem; }
   .slib-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 20px; }

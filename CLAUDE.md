@@ -110,7 +110,7 @@ Icons are inline SVG (never an icon font — icon fonts failed to render reliabl
 During service windows (church Eastern time) the three "Watch Online" buttons (header, mobile nav, footer) turn into a red pulsing "Watch Live" link to the live stream; otherwise they read "Watch Online" and link to the channel. Windows are defined in `isLive()` as minutes-since-midnight, 5 min before to 95 min after each service start:
 - Sunday morning 11:00 AM
 - Sunday evening 5:00 PM, **automatically 1:00 PM on the first Sunday of the month** (the evening service moves; it is not an extra service)
-- Wednesday 6:30 PM is **currently disabled** (commented out in `isLive()`). Re-enable by restoring the Wednesday window.
+- Wednesday 6:30 PM, **enabled 2026-09-20** at the church's request. Window is `[1105, 1205]`, which is 6:25 PM to 8:05 PM.
 
 Timezone is `America/Indiana/Indianapolis` (computed via `Intl`, so it is correct regardless of the visitor's location). It re-checks every 60 seconds. To change service times or add a streamed service, edit `isLive()`.
 
