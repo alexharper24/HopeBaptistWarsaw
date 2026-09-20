@@ -131,28 +131,50 @@ function hopeIsLive() {
 // ===== Live service indicator =====
 // During service windows the "Watch Online" buttons become a pulsing
 // "Watch Live" link. When HOPE_WORKER_URL is set, the actual stream is
-// confirmed and the link deep-links to the exact live video.
+// confirmed first, so the buttons only flip when a stream is really on.
+//
+// When live they point at the site's OWN player (#sermonLive on the sermons
+// page), not at YouTube, so a visitor stays on hopebaptistwarsaw.org to watch.
+// YouTube remains the destination only when nothing is streaming.
+//
+// Any element can join this set by taking the .watch-online class. Give it
+// data-offline-href if its not-live destination is something other than the
+// YouTube channel, which is how the homepage "Browse Sermons" button keeps
+// pointing at sermons.html when there is no service on.
 (function () {
   var CHANNEL_URL = "https://www.youtube.com/@hopebaptistchurchwarsaw";
-  var LIVE_URL = "https://www.youtube.com/@hopebaptistchurchwarsaw/streams";
+  var LIVE_ANCHOR = 'sermonLive';
   var btns = document.querySelectorAll('.watch-online');
   if (!btns.length) return;
+  // Capture each button's own resting label once, before anything rewrites it.
   btns.forEach(function (a) { a.dataset.defaultHtml = a.innerHTML; });
 
-  function render(live, liveUrl) {
+  // Same page as the player, or a link across to it.
+  function liveHref() {
+    return document.getElementById(LIVE_ANCHOR) ? '#' + LIVE_ANCHOR : 'sermons.html#' + LIVE_ANCHOR;
+  }
+
+  function render(live) {
     btns.forEach(function (a) {
       if (live) {
         a.classList.add('is-live');
-        a.setAttribute('href', liveUrl);
-        a.setAttribute('target', '_blank');
-        a.setAttribute('rel', 'noopener');
+        a.setAttribute('href', liveHref());
+        // On-site now, so no new tab.
+        a.removeAttribute('target');
+        a.removeAttribute('rel');
         a.dataset.live = "1";
         a.innerHTML = '<span class="live-dot" aria-hidden="true"></span>Watch Live';
       } else {
         a.classList.remove('is-live');
-        a.setAttribute('href', CHANNEL_URL);
-        a.setAttribute('target', '_blank');
-        a.setAttribute('rel', 'noopener');
+        var off = a.dataset.offlineHref || CHANNEL_URL;
+        a.setAttribute('href', off);
+        if (/^https?:/i.test(off)) {
+          a.setAttribute('target', '_blank');
+          a.setAttribute('rel', 'noopener');
+        } else {
+          a.removeAttribute('target');
+          a.removeAttribute('rel');
+        }
         a.dataset.live = "";
         a.innerHTML = a.dataset.defaultHtml;
       }
@@ -163,19 +185,30 @@ function hopeIsLive() {
     var scheduled = hopeIsLive();
     // Outside service windows: never call the API (saves quota).
     if (!scheduled || !HOPE_WORKER_URL) {
-      render(scheduled, LIVE_URL);
+      render(scheduled);
       return;
     }
-    // Inside a window: confirm the stream is actually on and deep-link to it.
+    // Inside a window: confirm the stream is actually on.
     // Fall back to the schedule guess if the check fails.
     fetch(HOPE_WORKER_URL)
       .then(function (r) { return r.json(); })
-      .then(function (d) { render(!!d.live, d.watchUrl || LIVE_URL); })
-      .catch(function () { render(true, LIVE_URL); });
+      .then(function (d) { render(!!d.live); })
+      .catch(function () { render(true); });
   }
 
   update();
   setInterval(update, 60000); // re-check every minute so it flips on/off automatically
+
+  // These hrefs are written after load, so the parse-time anchor handler near the
+  // top of this file never bound them. Handle the same-page jump here instead.
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href="#' + LIVE_ANCHOR + '"]');
+    if (!a) return;
+    var el = document.getElementById(LIVE_ANCHOR);
+    if (!el || el.style.display === 'none') return;
+    e.preventDefault();
+    scrollToWithOffset(el, 12);
+  });
 })();
 
 // ===== Sermons page (video library + separate live section) =====
@@ -241,11 +274,27 @@ function hopeIsLive() {
 
   // Live section: only during service windows, and only if the stream is
   // actually on. Hidden entirely otherwise.
+  // Arriving from a Watch Live button means the hash is #sermonLive, but this
+  // section is display:none until the Worker confirms a stream. Both the browser's
+  // native hash jump and the load handler at the top of this file have already run
+  // and missed by then, so scroll once here, after it is genuinely on screen.
+  var liveHashDone = false;
+  function scrollToLiveIfRequested() {
+    if (liveHashDone || location.hash !== '#sermonLive') return;
+    liveHashDone = true;
+    setTimeout(function () { scrollToWithOffset(liveSection, 12); }, 60);
+  }
+
   function showLive(id) {
-    if (liveSection.dataset.vid === id) { liveSection.style.display = ''; return; }
+    if (liveSection.dataset.vid === id) {
+      liveSection.style.display = '';
+      scrollToLiveIfRequested();
+      return;
+    }
     liveSection.dataset.vid = id;
     livePlayer.innerHTML = playerHtml(id, 'Live service', false);
     liveSection.style.display = '';
+    scrollToLiveIfRequested();
   }
   function hideLive() {
     if (liveSection.style.display === 'none') return;

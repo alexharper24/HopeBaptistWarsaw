@@ -859,7 +859,12 @@ a { text-decoration: none; color: inherit; }
 /* Consistent section heading (shared by the live and library sections) */
 .slib-heading { font-size: 1.9rem; color: var(--navy); text-align: center; margin-bottom: 34px; padding-bottom: 14px; }
 .slib-heading::after { content: ''; display: block; width: 54px; height: 3px; background: var(--gold); border-radius: 2px; margin: 14px auto 0; }
-.slib-heading-live { color: #c0392b; display: flex; align-items: center; justify-content: center; gap: 4px; }
+/* No display:flex here. .slib-heading centres its text and hangs the gold rule
+   underneath as a ::after block. Making this heading a flex container turned that
+   ::after into a flex ITEM, so the red rule sat beside "Live Now" instead of under
+   it, and the heading lost its centring. The .live-dot is inline-block with its own
+   margin, so it needs no flex to sit next to the text. */
+.slib-heading-live { color: #c0392b; }
 .slib-heading-live::after { background: #c0392b; }
 
 /* Live section (only shown while a service is streaming) */
