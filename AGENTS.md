@@ -19,14 +19,20 @@ The audience is ordinary church visitors and people searching for a church local
 ## File structure
 
 ```
-index.html        Home (hero, welcome/mission, 2026 focus, services+events, gallery, pastor, visit/contact)
+index.html        Home (hero, service strip, welcome teaser, 2026 focus, Plan Your Visit + contact, services+events)
+our-church.html   Our Church (welcome/mission, pastor, Life at Hope gallery, ministries teaser)
 gospel.html       "What is the Gospel?" (God, Problem/Sin, Penalty, Payment, Decision)
 beliefs.html      "What We Believe" (13 points in 4 groups)
-ministries.html   Scripture Publishing Ministry
+sermons.html      Sermons (live section + past-sermon library, driven by the Cloudflare Worker)
+ministries.html   Ministries hub (one card per ministry, links to detail pages)
+ministries-scripture.html  Scripture Publishing Ministry (detail page)
+ministries-women.html      Titus Women ministry (detail page; launching Oct 2026)
+connect.html      Connection Card (online version of the paper card; live Formspree form)
 style.css         All styles for every page
-main.js           All shared behavior (nav, scroll, scripture expand, live indicator, modal)
+main.js           All shared behavior (nav, scroll, scripture expand, live indicator, sermons page, modal)
 img/              All photos + logo
-sitemap.xml       Lists all four pages for search engines
+live-check-worker/  Cloudflare Worker (YouTube live status + sermon list)
+sitemap.xml       Lists every page for search engines
 robots.txt        Points crawlers at the sitemap
 CNAME             Custom domain (hopebaptistwarsaw.org) for GitHub Pages
 .nojekyll         Tells GitHub Pages to serve files verbatim (no Jekyll)

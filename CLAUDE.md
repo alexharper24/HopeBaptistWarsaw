@@ -27,6 +27,7 @@ sermons.html            Sermons (live section + past-sermon library, driven by t
 ministries.html         Ministries hub (landing page: one card per ministry, links to detail pages)
 ministries-scripture.html  Scripture Publishing Ministry (detail page)
 ministries-women.html   Titus Women ministry (detail page; launching Oct 2026)
+connect.html            Connection Card (online version of the paper card; live Formspree form)
 style.css               All styles for every page
 main.js                 All shared behavior (nav, scroll, scripture expand, live indicator, sermons page, modal)
 img/                    All photos + logo
@@ -40,9 +41,9 @@ README.md               Human-facing setup/deploy notes
 
 Every page shares the same header, mobile nav, footer, and Coming Soon modal markup. If you change one of those, change it in **all pages** to keep them in sync. **Ministries** in the nav points to the `ministries.html` hub; each ministry has its own `ministries-*.html` detail page, and new ministries are added as a card on the hub plus a detail page.
 
-**Information architecture.** Nav is six items: Our Church, The Gospel, What We Believe, Sermons, Ministries, Visit. Five are real pages; **Visit is deliberately an anchor to `index.html#visit`**, because the church wants service times and visit details on the homepage where visitors see them without a click. Do not split those back onto their own page without asking.
+**Information architecture.** Nav is six items: Our Church, The Gospel, What We Believe, Sermons, Ministries, Connection Card. All six are real pages.
 
-Connection Card briefly replaced Visit here on 2026-09-09 and was reverted on 2026-09-14 when the page was pulled (see below). If the page comes back, Connection Card takes the Visit slot again rather than becoming a seventh item.
+**Visit is not in the nav.** It held the sixth slot until 2026-09-09, came back on 2026-09-14 while the connection card was pulled, and Connection Card took the slot again on 2026-09-24. Plan Your Visit still lives on the homepage at `index.html#visit` and is reached from the hero button, the footer Quick Links and any older external link, so do not split those details onto their own page and do not make the nav seven items without asking.
 
 - `our-church.html` owns the About/mission copy, the pastor bio, and the Life at Hope gallery.
 - `index.html` owns Plan Your Visit (what to expect, contact, location) and Services & Events, and carries `id="visit"` / `id="events"` for the nav and for older external links. `id="about"` is kept for the same reason.
@@ -154,25 +155,11 @@ Adding a fifth group means a fifth pill, which is what pushes the phone nav to a
 row, so prefer adding a doctrine to an existing group. If the labels ever need to grow,
 make the nav a single horizontal scroll strip on mobile rather than letting it wrap.
 
-### Connection card (connect.html) — PULLED, not currently on the site
-**Taken down on 2026-09-14** and held until Stephen creates the Formspree account.
-`connect.html` was deleted, every link to it removed, and the sitemap entry dropped, so
-`hopebaptistwarsaw.org/connect.html` now returns 404. Nothing about it is lost: restore
-the page verbatim with
-
-```bash
-git checkout e073d74 -- connect.html
-```
-
-then re-add the nav item (Connection Card takes the Visit slot), the footer Quick Links
-entry, the button in Plan Your Visit on `index.html`, the `sitemap.xml` line, and raise
-the two header-fit breakpoints in `style.css` back to 980 and 1120. The form styles
-(`.form-card`, `.form-fieldset`, `.check-list`, `.form-todo` and friends) were **left in
-`style.css` on purpose**, along with their dark-mode overrides, so the page comes back
-looking right with no CSS work. Do not delete them as "unused".
-
-The rest of this section describes the page as built, and stays accurate for whenever it
-returns.
+### Connection card (connect.html) — LIVE
+**Relaunched 2026-09-24** with the real Formspree endpoint `https://formspree.io/f/mwlpqwbg`.
+It was pulled on 2026-09-14 in `bd57c2c` because it posted to a placeholder, and the page
+content came back from `e073d74` onto the current shared shell rather than by a plain
+checkout, because the header and footer had drifted in the meantime.
 
 The online version of the church's printed connection card, built so a QR code on the
 printed card can point at it. Plain `POST` to Formspree, no JavaScript involved, so it
@@ -188,13 +175,13 @@ church can drop a gift card off in person, and the copy says so.
 Spam control is the `_gotcha` honeypot, which Formspree discards on. It legitimately
 sits outside the viewport; that is not a layout bug.
 
-**While the ID is still `REPLACE_THIS_FORMSPREE_ID`, a yellow `.form-todo` notice sits
-above the form.** Delete that block in the same edit that pastes the real ID. Never let
-this page ship looking functional while it silently drops submissions.
+**If the endpoint is ever swapped back to a placeholder, restore the yellow `.form-todo`
+notice above the form in the same edit.** Never let this page ship looking functional
+while it silently drops submissions. The `.form-todo` styles are still in `style.css`.
 
-When live, the page sits in the main nav where Visit goes (see Information
-architecture), and is also reached by QR code, the footer Quick Links, and a button in
-Plan Your Visit on the homepage.
+The page sits in the main nav in the Visit slot, and is also reached by QR code, the
+footer Quick Links, and a button in Plan Your Visit on the homepage. Visit itself keeps
+its footer link, the hero button, and the `#visit` anchor on the homepage.
 
 **Faith Baptist School is deliberately not one of the checkboxes.** It is on the printed
 card, but the church asked for it to be left off the online version. Do not add it back

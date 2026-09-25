@@ -20,37 +20,29 @@ site updates automatically.
 - `ministries.html` - Ministries hub
 - `ministries-scripture.html` - Scripture Publishing Ministry
 - `ministries-women.html` - Titus Women
+- `connect.html` - Connection Card (online version of the paper card)
 
 Shared across all pages: `style.css` (all styling), `main.js` (all behavior),
 `img/` (all photos and the logo).
 
 ## Still pending
 
-- **Connection card page is pulled, waiting on Stephen.** It was taken down on
-  14 September 2026 until he creates the Formspree account, so
-  `hopebaptistwarsaw.org/connect.html` returns 404 and nothing links to it. The
-  page itself is safe in git. To bring it back:
+- **Connection card is live.** Relaunched 24 September 2026 at
+  `hopebaptistwarsaw.org/connect.html`, posting to
+  `https://formspree.io/f/mwlpqwbg`. It sits in the main nav in the Visit slot,
+  in the footer Quick Links, and behind a button in Plan Your Visit on the
+  homepage.
 
-  1. `git checkout e073d74 -- connect.html`
-  2. Paste the real Formspree ID over `REPLACE_THIS_FORMSPREE_ID` in the form
-     `action`, and delete the yellow notice above the form.
-  3. Put Connection Card back in the main nav and mobile nav on every page, in
-     the Visit slot.
-  4. Re-add the footer Quick Links entry, the button in Plan Your Visit on
-     `index.html`, and the `sitemap.xml` line.
-  5. Raise the two header-fit breakpoints in `style.css` from 920 and 1000 back
-     to 980 and 1120, or six nav items will wrap against the Watch Online button.
-  6. Bump `style.css?v=` on every page in the same commit.
+- **Click the Formspree confirmation email.** The first real submission triggers
+  a one time confirmation to the destination inbox, and nothing is delivered
+  until somebody clicks it. Send a test card through and confirm it arrives
+  before the QR code goes on anything printed.
 
-  The form styles are still in `style.css` on purpose. Do not clean them out.
-
-- **Decide the destination inbox** for connection cards. Set it in the Formspree
-  dashboard, not in this repo. The first real submission triggers a one time
-  confirmation email that somebody has to click before anything gets delivered.
-  Free tier is 50 submissions per month.
-- **QR code for the printed card.** Once the form is live, generate a QR pointing
-  at `https://hopebaptistwarsaw.org/connect.html` and drop it into the printed
-  card artwork where the placeholder sits.
+- **Confirm the destination inbox** in the Formspree dashboard, not in this
+  repo. Free tier is 50 submissions per month, which is the cap to watch.
+- **QR code for the printed card.** Generate a QR pointing at
+  `https://hopebaptistwarsaw.org/connect.html` and drop it into the printed card
+  artwork where the placeholder sits.
 
 Note: the Faith Baptist School checkbox on the printed card is deliberately left
 off the online form, at the church's request.
