@@ -426,3 +426,61 @@ function hopeIsLive() {
 
   foot.classList.add('footer-accordion-ready');
 })();
+
+// ===== Formspree forms: submit in place =====
+// A form with data-ajax-form posts to Formspree in the background and swaps itself
+// for the panel named in data-thanks, so the visitor never lands on Formspree's own
+// "thanks" page. Without fetch the submit handler steps aside and the plain POST runs.
+(function () {
+  var form = document.querySelector('form[data-ajax-form]');
+  if (!form) return;
+  var thanks = document.getElementById(form.getAttribute('data-thanks'));
+  var card = form.closest('.form-card') || form;
+  var btn = form.querySelector('button[type="submit"]');
+  var PHONE = '(574) 377-0573';
+
+  function clearError() {
+    var prev = form.querySelector('.form-error');
+    if (prev) prev.remove();
+  }
+  function showError(msg) {
+    clearError();
+    var d = document.createElement('div');
+    d.className = 'form-error';
+    d.setAttribute('role', 'alert');
+    d.textContent = msg;
+    btn.parentNode.parentNode.insertBefore(d, btn.parentNode);
+  }
+
+  form.addEventListener('submit', function (e) {
+    if (!window.fetch || !window.FormData || !thanks) return;
+    e.preventDefault();
+    clearError();
+    var original = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { Accept: 'application/json' }
+    }).then(function (res) {
+      if (res.ok) {
+        form.reset();
+        card.hidden = true;
+        thanks.hidden = false;
+        scrollToWithOffset(thanks, 16);
+        thanks.focus({ preventScroll: true });
+        return;
+      }
+      return res.json().catch(function () { return {}; }).then(function (d) {
+        var why = d && d.errors ? d.errors.map(function (x) { return x.message; }).join(', ') + '. ' : '';
+        showError(why + 'Your card was not sent. Please try again, or call us at ' + PHONE + '.');
+      });
+    }).catch(function () {
+      showError('We could not reach the server, so your card was not sent. Check your connection and try again, or call us at ' + PHONE + '.');
+    }).then(function () {
+      btn.disabled = false;
+      btn.textContent = original;
+    });
+  });
+})();

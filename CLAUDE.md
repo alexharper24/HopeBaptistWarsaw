@@ -172,6 +172,13 @@ just visiting and would prefer not to be contacted by anyone" and it would be wr
 force contact details out of someone who ticks it. The address fields exist so the
 church can drop a gift card off in person, and the copy says so.
 
+**Submission stays on the page.** The form carries `data-ajax-form`, and a handler at the
+bottom of `main.js` posts it with `Accept: application/json` and swaps the form card for
+`#connectThanks`, so visitors never see Formspree's own thanks page. Errors show inline
+with the church phone number. Without `fetch` the handler steps aside and the plain POST
+runs, so the Formspree page appears only in that case. Test it with `fetch` stubbed,
+because a real test submission lands in the church's Formspree inbox.
+
 Spam control is the `_gotcha` honeypot, which Formspree discards on. It legitimately
 sits outside the viewport; that is not a layout bug.
 

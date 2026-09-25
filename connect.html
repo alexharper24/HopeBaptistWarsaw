@@ -22,7 +22,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=19">
+<link rel="stylesheet" href="style.css?v=20">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -107,7 +107,7 @@
 
  <div class="form-card fade-up">
 
-  <form action="https://formspree.io/f/mwlpqwbg" method="POST">
+  <form action="https://formspree.io/f/mwlpqwbg" method="POST" data-ajax-form data-thanks="connectThanks">
 
    <fieldset class="form-fieldset">
     <legend class="form-legend">How may we contact you?</legend>
@@ -230,6 +230,14 @@
 
  </div>
 
+ <!-- Shown in place of the form once Formspree accepts the card (main.js). If JavaScript
+      is off, the plain POST still goes through and lands on Formspree's own page. -->
+ <div class="form-card form-thanks" id="connectThanks" tabindex="-1" hidden>
+  <h2 class="form-legend">Thank you!</h2>
+  <p>We received your connection card. We are so glad you visited Hope Baptist Church, and we look forward to seeing you again.</p>
+  <p>If you need anything in the meantime, call us at <a href="tel:5743770573">(574) 377-0573</a>.</p>
+ </div>
+
  <div class="form-aside fade-up">
   <p><strong>Would you rather talk to someone?</strong></p>
   <p>Call us at <a href="tel:5743770573">(574) 377-0573</a> or email <a href="mailto:info@hopebaptistwarsaw.org">info@hopebaptistwarsaw.org</a>. We would be glad to hear from you.</p>
@@ -316,6 +324,6 @@
  </div>
 </div>
 
-<script src="main.js?v=10"></script>
+<script src="main.js?v=11"></script>
 </body>
 </html>

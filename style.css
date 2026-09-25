@@ -24,6 +24,7 @@ html, body {
   .check-item input { accent-color: #1e3054 !important; }
   .form-todo { background-color: #fdf6e3 !important; }
   .form-aside { background-color: #faf8f4 !important; }
+  .form-error { background-color: #fdecea !important; color: #7a1f16 !important; }
   /* Meant to stay dark. See gotcha 1: the overrides above use !important. */
   .belief-group-title { background-color: #1e3054 !important; color: #ffffff !important; }
 }
@@ -295,6 +296,17 @@ a { text-decoration: none; color: inherit; }
  background: rgba(30,48,84,0.09); padding: 1px 6px; border-radius: 4px;
  font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.88em;
 }
+
+/* In-place submit (main.js). Error sits above the submit button; the thanks panel
+   replaces the whole form card once Formspree accepts the submission. */
+.form-error {
+ background: #fdecea; border-left: 4px solid #c0392b; color: #7a1f16;
+ padding: 12px 16px; border-radius: 8px; margin: 0 0 16px; font-size: 0.92rem;
+}
+.form-thanks { text-align: center; }
+.form-thanks p { color: var(--text-light); margin-top: 10px; }
+.form-thanks a { color: var(--navy); font-weight: 600; text-decoration: underline; }
+.form-thanks:focus { outline: none; }
 
 .form-privacy { font-size: 0.88rem; color: var(--text-light); margin-top: 18px; }
 .form-aside {
