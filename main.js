@@ -468,6 +468,9 @@ function hopeIsLive() {
         form.reset();
         card.hidden = true;
         thanks.hidden = false;
+        // Pre-submit prompts ("Would you rather talk to someone?") repeat what the
+        // thanks panel already says, so they step out once the card is sent.
+        document.querySelectorAll('[data-hide-on-thanks]').forEach(function (el) { el.hidden = true; });
         scrollToWithOffset(thanks, 16);
         thanks.focus({ preventScroll: true });
         return;

@@ -33,10 +33,11 @@ Shared across all pages: `style.css` (all styling), `main.js` (all behavior),
   in the footer Quick Links, and behind a button in Plan Your Visit on the
   homepage.
 
-- **Click the Formspree confirmation email.** The first real submission triggers
-  a one time confirmation to the destination inbox, and nothing is delivered
-  until somebody clicks it. Send a test card through and confirm it arrives
-  before the QR code goes on anything printed.
+- **Waiting on Stephen to confirm by email (as of 24 September 2026).** The card
+  is live, but Formspree sends a one time confirmation to the destination inbox
+  on the first real submission and delivers nothing until it is clicked. Once
+  Stephen confirms, send a test card through and check it arrives before the QR
+  code goes on anything printed.
 
 - **Confirm the destination inbox** in the Formspree dashboard, not in this
   repo. Free tier is 50 submissions per month, which is the cap to watch.
