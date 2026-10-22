@@ -26,7 +26,7 @@ beliefs.html            "What We Believe" (13 points in 4 groups; see Belief gro
 sermons.html            Sermons (live section + past-sermon library, driven by the Cloudflare Worker)
 ministries.html         Ministries hub (landing page: one card per ministry, links to detail pages)
 ministries-scripture.html  Scripture Publishing Ministry (detail page)
-ministries-women.html   Titus Women ministry (detail page; launching Oct 2026)
+ministries-women.html   Titus Women ministry (detail page; began 2026-10-13, meets the second Tuesday of each month)
 connect.html            Connection Card (online version of the paper card; live Formspree form)
 style.css               All styles for every page
 main.js                 All shared behavior (nav, scroll, scripture expand, live indicator, sermons page, modal)
@@ -239,7 +239,7 @@ Each page has a unique `<title>`, meta description, canonical URL, and Open Grap
 - Phone: (574) 377-0573. Email: info@hopebaptistwarsaw.org. Domain: hopebaptistwarsaw.org
 - Pastor: Stephen Williams.
 - Services: Sunday School 10:00 AM, Morning 11:00 AM, Sunday Evening 5:00 PM (1:00 PM first Sunday), Wednesday 6:30 PM.
-- Regular events: Men's Morning Bible Study (Thu 6:45 AM), Saturday Men's Prayer (Sat 7:00 PM), Town Outreach (3rd Friday, summer only), Symphony of Prayer (1st Saturday 9:00 AM).
+- Regular events: Men's Morning Bible Study (Fri 6:45 AM, moved from Thursday 2026-10-22), Saturday Men's Prayer (Sat 7:00 PM), Town Outreach (3rd Friday, summer only), Symphony of Prayer (1st Saturday 9:00 AM).
 - Facebook: https://www.facebook.com/profile.php?id=61586909768207
 - YouTube: https://www.youtube.com/@hopebaptistchurchwarsaw
 
