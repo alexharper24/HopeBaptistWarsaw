@@ -221,9 +221,11 @@ a { text-decoration: none; color: inherit; }
 /* ─── PASTOR ─── */
 .pastor-grid {
  display: grid; grid-template-columns: auto 1fr; gap: 48px; align-items: center;
- max-width: 820px; margin: 0 auto;
+ max-width: 920px; margin: 0 auto;
 }
-.pastor-photo { width: 280px; flex-shrink: 0; }
+/* 360px (was 280) at the church's request, 2026-10-22. The grid widened from 820 to
+   920 so the text column keeps about the width it had. The source is 500px wide. */
+.pastor-photo { width: 360px; flex-shrink: 0; }
 .pastor-photo img {
  width: 100%; border-radius: 10px;
  box-shadow: var(--shadow-lg); object-fit: cover;
@@ -785,7 +787,7 @@ a { text-decoration: none; color: inherit; }
  .mobile-toggle { display: block; }
  .header-ctas { display: none; }
  .welcome-grid, .visit-grid, .pastor-grid, .sermon-card, .footer-grid { grid-template-columns: 1fr; }
- .pastor-photo { width: 100%; max-width: 320px; margin: 0 auto; }
+ .pastor-photo { width: 100%; max-width: 380px; margin: 0 auto; }
  .sermon-card-image { min-height: 180px; }
  .hero { min-height: 420px; }
  .hero-content { padding: 60px 24px; }
